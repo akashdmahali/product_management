@@ -6,5 +6,21 @@
     "thumbnail": "apps/gpay-budget/cover.svg",
     "tags": ["Product Design", "Fintech", "Prototyping"],
     "year": "2026"
+  },
+  {
+    "id": "pinky-network",
+    "title": "Smart Zero - Pinky",
+    "subtitle": "Rethinking managing tasks",
+    "thumbnail": "apps/pink-network/cover.svg",
+    "tags": ["Product Design", "Productivity", "Prototyping"],
+    "year": "2026"
+  },
+  {
+    "id": "sheril-network",
+    "title": "Smart Zero - Sheril",
+    "subtitle": "Rethinking managing tasks",
+    "thumbnail": "apps/sheril-network/cover.svg",
+    "tags": ["Product Design", "Productivity", "Prototyping"],
+    "year": "2026"
   }
 ]
