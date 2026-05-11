@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#f5f4ef">
+<title>System Zero</title>
+<style>
+  :root {
+    --bg-page: #f5f4ef;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f1efe8;
+    --text-primary: #1d1d1b;
+    --text-secondary: #5f5e5a;
+    --text-tertiary: #9c9a92;
+    --border-tertiary: rgba(0,0,0,0.10);
+    --border-secondary: rgba(0,0,0,0.18);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-page);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 16px 0;
+  }
+
+  .phone { width: 320px; background: #0a0a0a; border-radius: 44px; padding: 10px; box-sizing: border-box; box-shadow: 0 12px 40px rgba(0,0,0,0.18); }
+  .phone-inner { background: var(--bg-primary); border-radius: 36px; overflow: hidden; position: relative; min-height: 700px; }
+  .brand { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 36px 16px 6px; border-bottom: 0.5px solid var(--border-tertiary); background: var(--bg-primary); }
+  .brand-mark { width: 26px; height: 26px; flex-shrink: 0; }
+  .brand-name { font-size: 14px; font-weight: 500; color: var(--text-primary); letter-spacing: 0.2px; }
+  .brand-name b { font-weight: 500; color: #26215C; }
+  .notch { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); width: 96px; height: 22px; background: #0a0a0a; border-radius: 16px; z-index: 5; }
+  .bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px 4px; font-size: 11px; font-weight: 500; color: var(--text-primary); }
+  .bar-icons i { display: inline-block; width: 14px; height: 8px; border: 0.8px solid var(--text-primary); border-radius: 2px; position: relative; }
+  .bar-icons i::after { content: ''; position: absolute; inset: 1px; width: 70%; background: var(--text-primary); border-radius: 1px; }
+  .head { padding: 8px 16px 4px; display: flex; align-items: center; justify-content: space-between; }
+  .head h3 { font-size: 16px; font-weight: 500; margin: 0; color: var(--text-primary); }
+  .head p { font-size: 11px; color: var(--text-secondary); margin: 2px 0 0; }
+  .back { font-size: 12px; color: var(--text-secondary); background: none; border: none; padding: 4px 0; cursor: pointer; font-family: inherit; }
+  .legend { display: flex; flex-wrap: wrap; gap: 4px 10px; padding: 6px 16px 8px; font-size: 10px; color: var(--text-secondary); }
+  .legend span { display: inline-flex; align-items: center; gap: 4px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .dot.d { border: 0.8px dashed; background: transparent; }
+  .graph-wrap { padding: 0 8px; }
+  .panel { margin: 4px 12px 12px; background: var(--bg-secondary); border-radius: 16px; padding: 12px 14px; min-height: 100px; }
+  .ph { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; flex-shrink: 0; }
+  .pt { font-size: 14px; font-weight: 500; margin: 0; color: var(--text-primary); line-height: 1.2; }
+  .ps { font-size: 11px; color: var(--text-secondary); margin: 1px 0 0; }
+  .task { font-size: 12px; line-height: 1.5; color: var(--text-primary); padding: 8px 0; border-top: 0.5px solid var(--border-tertiary); }
+  .task:first-of-type { border-top: none; padding-top: 2px; }
+  .task.new { background: #FAEEDA; margin: 6px -8px; padding: 8px 10px; border-radius: 8px; border: none; color: #412402; }
+  .empty { font-size: 12px; color: var(--text-secondary); font-style: italic; padding-top: 2px; margin: 0; }
+  .mention { background: var(--bg-primary); padding: 1px 5px; border-radius: 4px; font-size: 11px; color: var(--text-secondary); border: 0.5px solid var(--border-tertiary); white-space: nowrap; }
+  .home { width: 100px; height: 4px; background: var(--text-tertiary); border-radius: 2px; margin: 6px auto 10px; opacity: 0.5; }
+  .node-g { cursor: pointer; transition: transform 0.15s ease; transform-origin: center; transform-box: fill-box; }
+  .node-g:active { transform: scale(0.94); }
+  .node-g.active circle:nth-of-type(2) { stroke-width: 2.5; }
+  .ring { opacity: 0; transition: opacity 0.25s ease; }
+  .node-g.active .ring { opacity: 1; }
+  .node-g.detected .ring { opacity: 1; animation: pulse 1.4s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+  .cta { margin: 0 12px 12px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #26215C; color: white; border: none; border-radius: 999px; padding: 12px 20px; font-size: 13px; font-weight: 500; cursor: pointer; width: calc(100% - 24px); transition: transform 0.15s ease; font-family: inherit; }
+  .cta:active { transform: scale(0.97); }
+  .cta svg { width: 16px; height: 16px; }
+  .view { display: none; padding: 0 16px 16px; }
+  .view.on { display: block; }
+  .mic-wrap { display: flex; flex-direction: column; align-items: center; padding: 20px 0 16px; }
+  .mic { width: 88px; height: 88px; border-radius: 50%; background: #26215C; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; transition: transform 0.15s ease; }
+  .mic:active { transform: scale(0.95); }
+  .mic.rec { background: #A32D2D; }
+  .mic svg { width: 32px; height: 32px; color: white; }
+  .mic-ring { position: absolute; inset: -8px; border-radius: 50%; border: 2px solid #A32D2D; opacity: 0; }
+  .mic.rec .mic-ring { animation: micPulse 1.3s ease-out infinite; }
+  @keyframes micPulse { 0% { transform: scale(0.85); opacity: 0.8; } 100% { transform: scale(1.25); opacity: 0; } }
+  .mic-label { font-size: 12px; color: var(--text-secondary); margin-top: 12px; text-align: center; }
+  .bars { display: flex; gap: 3px; align-items: center; justify-content: center; height: 24px; margin-top: 10px; opacity: 0; transition: opacity 0.2s; }
+  .bars.on { opacity: 1; }
+  .bars i { width: 3px; background: #7F77DD; border-radius: 2px; animation: wave 0.9s ease-in-out infinite; }
+  .bars i:nth-child(1) { height: 8px; animation-delay: 0s; }
+  .bars i:nth-child(2) { height: 16px; animation-delay: 0.1s; }
+  .bars i:nth-child(3) { height: 22px; animation-delay: 0.2s; }
+  .bars i:nth-child(4) { height: 14px; animation-delay: 0.3s; }
+  .bars i:nth-child(5) { height: 20px; animation-delay: 0.4s; }
+  .bars i:nth-child(6) { height: 10px; animation-delay: 0.5s; }
+  .bars i:nth-child(7) { height: 18px; animation-delay: 0.6s; }
+  @keyframes wave { 0%, 100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
+  .transcript { background: var(--bg-secondary); border-radius: 12px; padding: 12px 14px; min-height: 80px; font-size: 13px; line-height: 1.55; color: var(--text-primary); margin-top: 14px; }
+  .transcript.empty-state { color: var(--text-tertiary); font-style: italic; }
+  .transcript .tag { padding: 1px 6px; border-radius: 4px; font-weight: 500; }
+  .transcript .tag.friend { background: #E1F5EE; color: #085041; }
+  .transcript .tag.app { background: #E6F1FB; color: #0C447C; }
+  .transcript .tag.orphan-p { background: #F1EFE8; color: #2C2C2A; border: 0.5px dashed #888780; }
+  .transcript .tag.orphan-a { background: #FAECE7; color: #4A1B0C; border: 0.5px dashed #D85A30; }
+  .row { display: flex; gap: 8px; margin-top: 14px; }
+  .btn { flex: 1; padding: 10px; border-radius: 999px; font-size: 12px; font-weight: 500; cursor: pointer; border: 0.5px solid var(--border-secondary); background: transparent; color: var(--text-primary); font-family: inherit; }
+  .btn.primary { background: #26215C; color: white; border-color: #26215C; }
+  .btn:active { transform: scale(0.97); }
+  .detected-box { background: var(--bg-secondary); border-radius: 12px; padding: 12px 14px; margin-top: 12px; }
+  .detected-title { font-size: 11px; font-weight: 500; color: var(--text-secondary); margin: 0 0 8px; letter-spacing: 0.3px; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { font-size: 11px; padding: 4px 10px; border-radius: 999px; display: inline-flex; align-items: center; gap: 5px; font-weight: 500; }
+  .chip i { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+  .chip.friend { background: #E1F5EE; color: #085041; }
+  .chip.friend i { background: #1D9E75; }
+  .chip.app { background: #E6F1FB; color: #0C447C; }
+  .chip.app i { background: #378ADD; }
+  .chip.orphan-a { background: #FAECE7; color: #4A1B0C; border: 0.5px dashed #D85A30; }
+  .chip.orphan-a i { background: #D85A30; }
+  .chip.orphan-p { background: #F1EFE8; color: #2C2C2A; border: 0.5px dashed #888780; }
+  .chip.orphan-p i { background: #888780; }
+  .task-preview { background: var(--bg-primary); border: 0.5px solid var(--border-tertiary); border-radius: 12px; padding: 12px 14px; margin-top: 12px; }
+  .task-preview .pl { font-size: 11px; color: var(--text-secondary); margin: 0 0 6px; }
+  .task-preview .pv { font-size: 13px; line-height: 1.5; color: var(--text-primary); margin: 0; }
+  .success { text-align: center; padding: 30px 16px; }
+  .success-icon { width: 56px; height: 56px; border-radius: 50%; background: #C0DD97; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
+  .success h4 { font-size: 16px; font-weight: 500; margin: 0 0 4px; color: var(--text-primary); }
+  .success p { font-size: 12px; color: var(--text-secondary); margin: 0; }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="phone-inner">
+    <div class="notch"></div>
+    <div class="bar">
+      <span>9:41</span>
+      <span class="bar-icons"><i></i></span>
+    </div>
+
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="16" cy="16" r="15" fill="#CECBF6" stroke="#26215C" stroke-width="1.2"/>
+        <circle cx="16" cy="16" r="3" fill="#26215C"/>
+        <circle cx="16" cy="16" r="8" fill="none" stroke="#26215C" stroke-width="1" opacity="0.55"/>
+        <circle cx="8" cy="10" r="1.8" fill="#1D9E75"/>
+        <circle cx="24" cy="10" r="1.8" fill="#378ADD"/>
+        <circle cx="24" cy="22" r="1.8" fill="#1D9E75"/>
+        <circle cx="8" cy="22" r="1.8" fill="#378ADD"/>
+        <line x1="16" y1="16" x2="8" y2="10" stroke="#26215C" stroke-width="0.6" opacity="0.45"/>
+        <line x1="16" y1="16" x2="24" y2="10" stroke="#26215C" stroke-width="0.6" opacity="0.45"/>
+        <line x1="16" y1="16" x2="24" y2="22" stroke="#26215C" stroke-width="0.6" opacity="0.45"/>
+        <line x1="16" y1="16" x2="8" y2="22" stroke="#26215C" stroke-width="0.6" opacity="0.45"/>
+      </svg>
+      <span class="brand-name">system <b>zero</b></span>
+    </div>
+
+    <div id="view-graph">
+      <div class="head">
+        <div>
+          <h3>Sheril's network</h3>
+          <p>Tap a node to view its actions</p>
+        </div>
+      </div>
+
+      <div class="legend">
+        <span><i class="dot" style="background: #AFA9EC;"></i>You</span>
+        <span><i class="dot" style="background: #5DCAA5;"></i>Friend</span>
+        <span><i class="dot" style="background: #85B7EB;"></i>App</span>
+        <span><i class="dot d" style="border-color: #888780;"></i>Unlinked person</span>
+        <span><i class="dot d" style="border-color: #D85A30;"></i>Unlinked app</span>
+      </div>
+
+      <div class="graph-wrap">
+        <svg id="graph" width="100%" viewBox="0 0 300 400" role="img" style="display: block;">
+          <title>Sheril's network</title>
+          <desc>Sheril at center linked to friends Arjun, Maitri and Pinky, and apps EPIC, Maps, Amazon and Calendar. Unlinked nodes Akash, Nike and Netflix sit at the edges.</desc>
+          <defs>
+            <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#CECBF6" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="#CECBF6" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="150" cy="200" r="100" fill="url(#centerGlow)"/>
+          <g stroke="#7F77DD" stroke-width="1" opacity="0.35" stroke-linecap="round">
+            <line x1="150" y1="200" x2="70"  y2="120"/>
+            <line x1="150" y1="200" x2="150" y2="95"/>
+            <line x1="150" y1="200" x2="230" y2="120"/>
+            <line x1="150" y1="200" x2="45"  y2="200"/>
+            <line x1="150" y1="200" x2="255" y2="200"/>
+            <line x1="150" y1="200" x2="85"  y2="295"/>
+            <line x1="150" y1="200" x2="215" y2="295"/>
+          </g>
+
+          <g class="node-g" data-id="akash">
+            <circle class="ring" cx="40" cy="50" r="26" fill="none" stroke="#888780" stroke-width="0.5"/>
+            <circle cx="40" cy="50" r="20" fill="#F1EFE8" stroke="#888780" stroke-width="1" stroke-dasharray="3 2.5"/>
+            <text x="40" y="54" text-anchor="middle" font-size="10" font-weight="500" fill="#444441">Akash</text>
+          </g>
+          <g class="node-g" data-id="nike">
+            <circle class="ring" cx="260" cy="50" r="26" fill="none" stroke="#D85A30" stroke-width="0.5"/>
+            <circle cx="260" cy="50" r="20" fill="#FAECE7" stroke="#D85A30" stroke-width="1" stroke-dasharray="3 2.5"/>
+            <text x="260" y="54" text-anchor="middle" font-size="10" font-weight="500" fill="#712B13">Nike</text>
+          </g>
+          <g class="node-g" data-id="netflix">
+            <circle class="ring" cx="150" cy="365" r="26" fill="none" stroke="#D85A30" stroke-width="0.5"/>
+            <circle cx="150" cy="365" r="20" fill="#FAECE7" stroke="#D85A30" stroke-width="1" stroke-dasharray="3 2.5"/>
+            <text x="150" y="369" text-anchor="middle" font-size="10" font-weight="500" fill="#712B13">Netflix</text>
+          </g>
+
+          <g class="node-g" data-id="pinky">
+            <circle class="ring" cx="70" cy="120" r="32" fill="none" stroke="#1D9E75" stroke-width="0.5"/>
+            <circle cx="70" cy="120" r="26" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.2"/>
+            <text x="70" y="124" text-anchor="middle" font-size="11" font-weight="500" fill="#085041">Pinky</text>
+          </g>
+          <g class="node-g" data-id="maitri">
+            <circle class="ring" cx="150" cy="95" r="32" fill="none" stroke="#1D9E75" stroke-width="0.5"/>
+            <circle cx="150" cy="95" r="26" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.2"/>
+            <text x="150" y="99" text-anchor="middle" font-size="11" font-weight="500" fill="#085041">Maitri</text>
+          </g>
+          <g class="node-g" data-id="arjun">
+            <circle class="ring" cx="230" cy="120" r="32" fill="none" stroke="#1D9E75" stroke-width="0.5"/>
+            <circle cx="230" cy="120" r="26" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.2"/>
+            <text x="230" y="124" text-anchor="middle" font-size="11" font-weight="500" fill="#085041">Arjun</text>
+          </g>
+
+          <g class="node-g" data-id="gcal">
+            <circle class="ring" cx="45" cy="200" r="30" fill="none" stroke="#378ADD" stroke-width="0.5"/>
+            <circle cx="45" cy="200" r="24" fill="#E6F1FB" stroke="#378ADD" stroke-width="1.2"/>
+            <rect x="34" y="192" width="22" height="20" rx="3" fill="none" stroke="#0C447C" stroke-width="1.2"/>
+            <line x1="34" y1="198" x2="56" y2="198" stroke="#0C447C" stroke-width="1.2"/>
+            <line x1="40" y1="188" x2="40" y2="195" stroke="#0C447C" stroke-width="1.2"/>
+            <line x1="50" y1="188" x2="50" y2="195" stroke="#0C447C" stroke-width="1.2"/>
+            <text x="45" y="236" text-anchor="middle" font-size="9" font-weight="500" fill="#0C447C">Calendar</text>
+          </g>
+          <g class="node-g" data-id="amazon">
+            <circle class="ring" cx="255" cy="200" r="30" fill="none" stroke="#378ADD" stroke-width="0.5"/>
+            <circle cx="255" cy="200" r="24" fill="#E6F1FB" stroke="#378ADD" stroke-width="1.2"/>
+            <path d="M244 192 L244 204 M244 204 L266 204 M266 192 L266 204" fill="none" stroke="#0C447C" stroke-width="1.3" stroke-linecap="round"/>
+            <path d="M242 210 Q255 217 268 210" fill="none" stroke="#0C447C" stroke-width="1.4" stroke-linecap="round"/>
+            <text x="255" y="236" text-anchor="middle" font-size="10" font-weight="500" fill="#0C447C">Amazon</text>
+          </g>
+          <g class="node-g" data-id="epic">
+            <circle class="ring" cx="85" cy="295" r="30" fill="none" stroke="#378ADD" stroke-width="0.5"/>
+            <circle cx="85" cy="295" r="24" fill="#E6F1FB" stroke="#378ADD" stroke-width="1.2"/>
+            <path d="M85 285 L85 305 M75 295 L95 295" stroke="#0C447C" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="85" cy="295" r="9" fill="none" stroke="#0C447C" stroke-width="1.2"/>
+            <text x="85" y="332" text-anchor="middle" font-size="10" font-weight="500" fill="#0C447C">EPIC</text>
+          </g>
+          <g class="node-g" data-id="gmaps">
+            <circle class="ring" cx="215" cy="295" r="30" fill="none" stroke="#378ADD" stroke-width="0.5"/>
+            <circle cx="215" cy="295" r="24" fill="#E6F1FB" stroke="#378ADD" stroke-width="1.2"/>
+            <path d="M215 283 C 209 283 205 287 205 293 C 205 299 215 307 215 307 C 215 307 225 299 225 293 C 225 287 221 283 215 283 Z" fill="none" stroke="#0C447C" stroke-width="1.3" stroke-linejoin="round"/>
+            <circle cx="215" cy="293" r="2.6" fill="#0C447C"/>
+            <text x="215" y="332" text-anchor="middle" font-size="10" font-weight="500" fill="#0C447C">Maps</text>
+          </g>
+
+          <g class="node-g active" data-id="sheril">
+            <circle class="ring" cx="150" cy="200" r="46" fill="none" stroke="#7F77DD" stroke-width="0.5" style="opacity:1"/>
+            <circle cx="150" cy="200" r="38" fill="#CECBF6" stroke="#7F77DD" stroke-width="1.5"/>
+            <text x="150" y="198" text-anchor="middle" font-size="14" font-weight="500" fill="#26215C">Sheril</text>
+            <text x="150" y="212" text-anchor="middle" font-size="9" fill="#534AB7">you</text>
+          </g>
+        </svg>
+      </div>
+
+      <div id="panel" class="panel">
+        <div class="ph">
+          <div class="avatar" id="pAv" style="background: #CECBF6; color: #26215C;">S</div>
+          <div>
+            <p class="pt" id="pTitle">Sheril</p>
+            <p class="ps" id="pSub">You · central hub</p>
+          </div>
+        </div>
+        <div id="pBody"></div>
+      </div>
+
+      <button class="cta" id="openVoice">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="3" width="6" height="12" rx="3"/>
+          <path d="M5 11a7 7 0 0 0 14 0"/>
+          <line x1="12" y1="18" x2="12" y2="22"/>
+        </svg>
+        Capture a task with voice
+      </button>
+    </div>
+
+    <div id="view-voice" class="view">
+      <div class="head" style="padding: 8px 0 4px;">
+        <div>
+          <h3 id="voiceHead">New voice task</h3>
+          <p id="voiceSub">Tap the mic and speak naturally</p>
+        </div>
+        <button class="back" id="cancelVoice">Cancel</button>
+      </div>
+
+      <div id="step-record">
+        <div class="mic-wrap">
+          <div class="mic" id="micBtn">
+            <div class="mic-ring"></div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="3" width="6" height="12" rx="3"/>
+              <path d="M5 11a7 7 0 0 0 14 0"/>
+              <line x1="12" y1="18" x2="12" y2="22"/>
+            </svg>
+          </div>
+          <div class="bars" id="bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="mic-label" id="micLabel">Tap to start recording</div>
+        </div>
+        <div class="transcript empty-state" id="transcript">Your transcription will appear here…</div>
+      </div>
+
+      <div id="step-confirm" style="display: none;">
+        <div class="transcript" id="transcriptFinal"></div>
+
+        <div class="detected-box">
+          <p class="detected-title">Detected nodes</p>
+          <div class="chip-row" id="chips"></div>
+        </div>
+
+        <div class="task-preview">
+          <p class="pl">Task to save</p>
+          <p class="pv" id="taskText"></p>
+        </div>
+
+        <div class="row">
+          <button class="btn" id="editBtn">Re-record</button>
+          <button class="btn primary" id="confirmBtn">Confirm &amp; save</button>
+        </div>
+      </div>
+
+      <div id="step-success" style="display: none;">
+        <div class="success">
+          <div class="success-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#27500A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12l5 5L20 7"/>
+            </svg>
+          </div>
+          <h4>Task saved</h4>
+          <p id="successSub">Assigned to detected nodes</p>
+        </div>
+        <button class="btn primary" id="doneBtn" style="width: 100%;">Back to network</button>
+      </div>
+    </div>
+
+    <div class="home"></div>
+  </div>
+</div>
+
+<script>
+const data = {
+  sheril: { title: 'Sheril', sub: 'You · central hub', av: 'S', bg: '#CECBF6', fg: '#26215C', kind: 'you', tasks: [
+    'Janie and Jack sale ends tonight — <span class="mention">Amazon</span> cart has 3 items for Rayansh waiting for checkout.',
+    'Rayansh\'s 3-year vaccination is due in 9 days. <span class="mention">EPIC</span> shows MMR-2 + Varicella-2 pending; want me to book a slot on <span class="mention">Calendar</span>?',
+    '<span class="mention">Maitri</span> proposed Saturday 11am brunch — needs your reply.',
+    '<span class="mention">Akash</span> sent a thread about the school reunion — pending response.'
+  ]},
+  arjun: { title: 'Arjun', sub: 'Friend · connected', av: 'A', bg: '#9FE1CB', fg: '#085041', kind: 'friend', tasks: [
+    'Arjun is dropping off the camping gear Friday evening — <span class="mention">Maps</span> ETA 7:15pm.',
+    'He asked if Rayansh has outgrown the toddler bike — reply pending.'
+  ]},
+  maitri: { title: 'Maitri', sub: 'Friend · connected', av: 'M', bg: '#9FE1CB', fg: '#085041', kind: 'friend', tasks: [
+    'Maitri proposed Saturday 11am brunch at <span class="mention">Phoenix Marketcity</span> — needs your reply.',
+    'Birthday gift idea draft for her daughter waiting on your approval.'
+  ]},
+  pinky: { title: 'Pinky', sub: 'Friend · connected', av: 'P', bg: '#9FE1CB', fg: '#085041', kind: 'friend', tasks: [
+    'Pinky shared Rayansh\'s nap-pattern notes — review when you have a minute.',
+    'She\'s asked whether to RSVP the both of you to the daycare potluck Friday.'
+  ]},
+  epic: { title: 'EPIC', sub: 'App · connected', av: 'EP', bg: '#B5D4F4', fg: '#0C447C', kind: 'app', tasks: [
+    'Rayansh\'s 3-year vaccinations are due in 9 days — MMR-2 and Varicella-2 pending. 2 pediatrician slots open next week.',
+    'Annual well-child report ready to download — last updated yesterday.',
+    'Growth chart shows 75th percentile; next checkpoint at month 40.'
+  ]},
+  gmaps: { title: 'Google Maps', sub: 'App · connected', av: 'GM', bg: '#B5D4F4', fg: '#0C447C', kind: 'app', tasks: [
+    'Saturday brunch route to <span class="mention">Phoenix Marketcity</span> with <span class="mention">Maitri</span> — 24 min via Nagar Rd.',
+    'Arjun\'s drop-off Friday evening — saved as a one-time pickup pin.',
+    'Pediatrician for Rayansh\'s vaccination: 14 min via Mundhwa.'
+  ]},
+  amazon: { title: 'Amazon', sub: 'App · connected', av: 'A', bg: '#B5D4F4', fg: '#0C447C', kind: 'app', tasks: [
+    'Janie and Jack sale ends tonight — 3 items in cart for Rayansh. Free shipping above ₹2,499.',
+    'Diaper subscription renews in 4 days — switch to size 5 if Rayansh has outgrown current size?',
+    'Return window closes tomorrow on the wooden activity board.'
+  ]},
+  gcal: { title: 'Google Calendar', sub: 'App · connected', av: 'GC', bg: '#B5D4F4', fg: '#0C447C', kind: 'app', tasks: [
+    'Rayansh vaccination slot needs to be booked — <span class="mention">EPIC</span> recommends a Tue or Thu morning.',
+    'Saturday 11am has a soft hold for brunch with <span class="mention">Maitri</span> — convert to confirmed?',
+    'Parent-teacher meet next Wednesday 4:30pm — no prep tasks logged yet.'
+  ]},
+  akash: { title: 'Akash', sub: 'Person · unlinked', av: 'A', bg: '#D3D1C7', fg: '#2C2C2A', kind: 'orphan-p', tasks: [
+    'Akash messaged about a school reunion next month — awaiting your reply.',
+    '<span class="mention">Pinky</span> asked whether to include Akash in Saturday\'s plans.',
+    'No shared apps yet — connect <span class="mention">Calendar</span> to sync availability.'
+  ]},
+  nike: { title: 'Nike', sub: 'App · unlinked', av: 'N', bg: '#F5C4B3', fg: '#4A1B0C', kind: 'orphan-a', tasks: [
+    'Running streak paused for 11 days — Nike Run Club is asking whether to archive the goal.',
+    'New toddler-size sneakers in stock for Rayansh — could route the order through <span class="mention">Amazon</span> if connected.',
+    'Could log your morning walks to <span class="mention">Calendar</span> once authorized.'
+  ]},
+  netflix: { title: 'Netflix', sub: 'App · unlinked', av: 'NF', bg: '#F5C4B3', fg: '#4A1B0C', kind: 'orphan-a', tasks: [
+    '2 of your saved shows have new seasons out this week.',
+    'Kids profile for Rayansh has 14 hours of watch time this week — over your 7h preference.',
+    'Could block movie-night slots automatically on <span class="mention">Calendar</span> once connected.'
+  ]}
+};
+
+const sampleScript = {
+  raw: "Order the Janie and Jack outfits before the sale ends and book Rayansh's vaccination with Arjun for next Tuesday.",
+  highlighted: 'Order the Janie and Jack outfits from <span class="tag app">Amazon</span> before the sale ends and book Rayansh\'s vaccination via <span class="tag app">EPIC</span> with <span class="tag friend">Arjun</span> for next Tuesday on <span class="tag app">Calendar</span>.',
+  nodes: ['amazon', 'epic', 'arjun', 'gcal'],
+  taskText: 'Check out the Janie and Jack cart on Amazon; book Tuesday vaccination slot for Rayansh via EPIC with Arjun joining; add to Calendar.'
+};
+
+const pTitle = document.getElementById('pTitle');
+const pSub = document.getElementById('pSub');
+const pBody = document.getElementById('pBody');
+const pAv = document.getElementById('pAv');
+const newTasks = {};
+
+function render(id) {
+  const d = data[id];
+  if (!d) return;
+  pTitle.textContent = d.title;
+  pSub.textContent = d.sub;
+  pAv.textContent = d.av;
+  pAv.style.background = d.bg;
+  pAv.style.color = d.fg;
+
+  let html = '';
+  if (newTasks[id]) {
+    html += '<div class="task new">' + newTasks[id] + '</div>';
+  }
+  const existing = d.tasks || [];
+  if (existing.length === 0 && !newTasks[id]) {
+    html = '<p class="empty">No actions pending.</p>';
+  } else {
+    html += existing.map(t => '<div class="task">' + t + '</div>').join('');
+  }
+  pBody.innerHTML = html;
+
+  document.querySelectorAll('#graph .node-g').forEach(n => {
+    n.classList.toggle('active', n.dataset.id === id);
+  });
+}
+
+render('sheril');
+
+document.querySelectorAll('#graph .node-g').forEach(g => {
+  g.addEventListener('click', () => render(g.dataset.id));
+});
+
+const viewGraph = document.getElementById('view-graph');
+const viewVoice = document.getElementById('view-voice');
+const stepRecord = document.getElementById('step-record');
+const stepConfirm = document.getElementById('step-confirm');
+const stepSuccess = document.getElementById('step-success');
+const micBtn = document.getElementById('micBtn');
+const micLabel = document.getElementById('micLabel');
+const bars = document.getElementById('bars');
+const transcript = document.getElementById('transcript');
+const transcriptFinal = document.getElementById('transcriptFinal');
+const chips = document.getElementById('chips');
+const taskText = document.getElementById('taskText');
+const successSub = document.getElementById('successSub');
+
+function showStep(name) {
+  stepRecord.style.display = name === 'record' ? 'block' : 'none';
+  stepConfirm.style.display = name === 'confirm' ? 'block' : 'none';
+  stepSuccess.style.display = name === 'success' ? 'block' : 'none';
+}
+
+function openVoice() {
+  viewGraph.style.display = 'none';
+  viewVoice.classList.add('on');
+  resetVoice();
+}
+function closeVoice() {
+  viewGraph.style.display = 'block';
+  viewVoice.classList.remove('on');
+  document.querySelectorAll('#graph .node-g').forEach(n => n.classList.remove('detected'));
+}
+function resetVoice() {
+  showStep('record');
+  micBtn.classList.remove('rec');
+  bars.classList.remove('on');
+  micLabel.textContent = 'Tap to start recording';
+  transcript.className = 'transcript empty-state';
+  transcript.textContent = 'Your transcription will appear here…';
+  document.getElementById('voiceHead').textContent = 'New voice task';
+  document.getElementById('voiceSub').textContent = 'Tap the mic and speak naturally';
+  document.querySelectorAll('#graph .node-g').forEach(n => n.classList.remove('detected'));
+}
+
+let recording = false;
+let recordTimer = null;
+
+function startRecording() {
+  recording = true;
+  micBtn.classList.add('rec');
+  bars.classList.add('on');
+  micLabel.textContent = 'Listening… tap to stop';
+  transcript.className = 'transcript';
+  transcript.innerHTML = '<span style="color: var(--text-tertiary);">…</span>';
+  recordTimer = setTimeout(() => {
+    if (recording) finishRecording();
+  }, 2400);
+}
+function finishRecording() {
+  recording = false;
+  clearTimeout(recordTimer);
+  micBtn.classList.remove('rec');
+  bars.classList.remove('on');
+  micLabel.textContent = 'Processing…';
+  transcript.textContent = sampleScript.raw;
+  setTimeout(() => {
+    showConfirm();
+  }, 700);
+}
+
+function showConfirm() {
+  showStep('confirm');
+  document.getElementById('voiceHead').textContent = 'Review & confirm';
+  document.getElementById('voiceSub').textContent = 'Detected nodes shown below';
+  transcriptFinal.innerHTML = sampleScript.highlighted;
+  taskText.textContent = sampleScript.taskText;
+  chips.innerHTML = sampleScript.nodes.map(id => {
+    const d = data[id];
+    const klass = d.kind === 'friend' ? 'friend' : d.kind === 'app' ? 'app' : d.kind === 'orphan-a' ? 'orphan-a' : 'orphan-p';
+    return '<span class="chip ' + klass + '"><i></i>' + d.title + '</span>';
+  }).join('');
+  document.querySelectorAll('#graph .node-g').forEach(n => {
+    n.classList.toggle('detected', sampleScript.nodes.includes(n.dataset.id));
+  });
+}
+
+function confirmTask() {
+  sampleScript.nodes.forEach(id => {
+    newTasks[id] = sampleScript.taskText;
+  });
+  showStep('success');
+  document.getElementById('voiceHead').textContent = 'Done';
+  document.getElementById('voiceSub').textContent = '';
+  successSub.textContent = 'Linked to ' + sampleScript.nodes.map(id => data[id].title).join(', ');
+}
+
+document.getElementById('openVoice').addEventListener('click', openVoice);
+document.getElementById('cancelVoice').addEventListener('click', closeVoice);
+micBtn.addEventListener('click', () => {
+  if (!recording) startRecording();
+  else finishRecording();
+});
+document.getElementById('editBtn').addEventListener('click', resetVoice);
+document.getElementById('confirmBtn').addEventListener('click', confirmTask);
+document.getElementById('doneBtn').addEventListener('click', () => {
+  const firstNode = sampleScript.nodes[0];
+  closeVoice();
+  render(firstNode);
+});
+</script>
+</body>
+</html>
