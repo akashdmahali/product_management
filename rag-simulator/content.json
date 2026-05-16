@@ -1,0 +1,46 @@
+{
+  "title": "RAG Simulator",
+  "subtitle": "Learn How RAG works under the hood",
+  "role": "Product Design · UX Research · Prototyping",
+  "timeline": "April – May 2026",
+  "overview": "This simulation will help you understand how RAG works",
+
+  "sections": [
+    {
+      "heading": "The Problem",
+      "body": ""
+    },
+    {
+      "heading": "Key Insight",
+      "body": ""
+    },
+    {
+      "heading": "The Solution",
+      "body": ""
+    },
+    {
+      "heading": "Design Decisions",
+      "body": ""
+    }
+  ],
+
+  "links": [
+    {
+      "label": "Interactive Prototype",
+      "url": "https://apps.ex-machina-2030.com/apps/rag-simulator/demo",
+      "type": "prototype"
+    },
+    {
+      "label": "Research & Problem Framing",
+      "url": "#",
+      "type": "doc"
+    },
+    {
+      "label": "Design Exploration Sketches",
+      "url": "#",
+      "type": "slides"
+    }
+  ],
+
+  "prototype_embed": "https://apps.ex-machina-2030.com/apps/rag-simulator/demo"
+}

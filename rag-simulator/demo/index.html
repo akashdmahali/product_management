@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG Pipeline Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #18181f;
+    --border: #2a2a3a;
+    --accent: #7c3aed;
+    --accent2: #06b6d4;
+    --accent3: #f59e0b;
+    --text: #e8e8f0;
+    --text-muted: #6b6b80;
+    --success: #10b981;
+    --chunk-b1: #7c3aed;
+    --chunk-b2: #06b6d4;
+    --chunk-b3: #f59e0b;
+    --chunk-b4: #ef4444;
+    --chunk-b5: #10b981;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.25;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.12;
+  }
+  .glow-orb-1 { width: 600px; height: 600px; background: var(--accent); top: -200px; right: -100px; }
+  .glow-orb-2 { width: 400px; height: 400px; background: var(--accent2); bottom: -100px; left: -100px; }
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+  header { text-align: center; margin-bottom: 52px; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(124,58,237,0.13);
+    border: 1px solid rgba(124,58,237,0.4);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .badge-dot {
+    width: 6px; height: 6px;
+    background: var(--accent2);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+  h1 {
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #fff 0%, var(--accent2) 50%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 14px;
+  }
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 1rem;
+    font-weight: 400;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  .pipeline-nav {
+    display: flex;
+    gap: 0;
+    margin-bottom: 36px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .pipeline-step {
+    flex: 1;
+    padding: 13px 8px;
+    text-align: center;
+    cursor: pointer;
+    border-right: 1px solid var(--border);
+    transition: all 0.22s;
+    position: relative;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+    user-select: none;
+  }
+  .pipeline-step:last-child { border-right: none; }
+  .pipeline-step .step-num {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+  }
+  .pipeline-step.active {
+    background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(6,182,212,0.08));
+    color: var(--text);
+  }
+  .pipeline-step.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+  .pipeline-step.done .step-num { color: var(--success); }
+  .pipeline-step:hover:not(.active) { background: var(--surface2); color: var(--text); }
+  .progress-ring {
+    width: 100%;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+    animation: fadeIn 0.35s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .card-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+  }
+  .card-title { font-size: 1.02rem; font-weight: 700; }
+  .card-desc { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; font-weight: 400; }
+  textarea, input[type="text"] {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 15px;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    resize: vertical;
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  textarea:focus, input[type="text"]:focus { border-color: var(--accent); }
+  textarea { min-height: 110px; }
+  label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    border-radius: 10px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.87rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.18s;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #5b21b6);
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(124,58,237,0.35);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 26px rgba(124,58,237,0.55); }
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent2); }
+  .btn-accent {
+    background: linear-gradient(135deg, var(--accent2), #0891b2);
+    color: #fff;
+    box-shadow: 0 4px 18px rgba(6,182,212,0.35);
+  }
+  .btn-accent:hover { transform: translateY(-1px); box-shadow: 0 6px 26px rgba(6,182,212,0.55); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+  .info-box {
+    background: rgba(124,58,237,0.08);
+    border: 1px solid rgba(124,58,237,0.22);
+    border-radius: 10px;
+    padding: 13px 16px;
+    font-size: 0.82rem;
+    line-height: 1.65;
+    color: var(--text-muted);
+    margin-bottom: 18px;
+  }
+  .info-box strong { color: var(--accent2); }
+  .step-indicator { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+  .step-badge {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+  .step-title { font-size: 1.08rem; font-weight: 700; }
+  .stage-panel { display: none; }
+  .stage-panel.active { display: block; }
+  .chunks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 11px;
+    margin-top: 16px;
+  }
+  .chunk {
+    border-radius: 10px;
+    padding: 13px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.73rem;
+    line-height: 1.6;
+    border: 1px solid;
+    transition: transform 0.18s;
+  }
+  .chunk:hover { transform: scale(1.02); }
+  .chunk-id { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 7px; opacity: 0.8; }
+  .embed-visual { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 9px; }
+  .embed-bar {
+    height: 26px;
+    border-radius: 3px;
+    transition: all 0.35s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .embed-bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.09));
+  }
+  .vector-table { width: 100%; border-collapse: collapse; font-family: 'Space Mono', monospace; font-size: 0.74rem; margin-top: 12px; }
+  .vector-table th {
+    text-align: left;
+    padding: 9px 11px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+  }
+  .vector-table td { padding: 9px 11px; border: 1px solid var(--border); vertical-align: top; line-height: 1.5; }
+  .vector-table tr:hover td { background: var(--surface2); }
+  .vec-preview { display: flex; gap: 2px; align-items: center; }
+  .vec-dot { width: 13px; height: 13px; border-radius: 3px; flex-shrink: 0; }
+  .similarity-bar-wrap { margin-bottom: 11px; }
+  .similarity-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 0.76rem; }
+  .similarity-bar-bg { height: 7px; background: var(--surface2); border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+  .similarity-bar-fill { height: 100%; border-radius: 4px; transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .context-window {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.77rem;
+    line-height: 1.7;
+    position: relative;
+  }
+  .context-window::before {
+    content: 'CONTEXT WINDOW';
+    position: absolute;
+    top: 10px; right: 14px;
+    font-size: 8px;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    font-family: 'Syne', sans-serif;
+  }
+  .context-section { margin-bottom: 12px; padding: 10px; border-radius: 8px; border-left: 3px solid; }
+  .context-section.system { border-color: var(--accent); background: rgba(124,58,237,0.08); }
+  .context-section.retrieved { border-color: var(--accent2); background: rgba(6,182,212,0.08); }
+  .context-section.query { border-color: var(--accent3); background: rgba(245,158,11,0.08); }
+  .context-label { font-size: 8px; text-transform: uppercase; letter-spacing: 0.13em; margin-bottom: 5px; font-family: 'Syne', sans-serif; font-weight: 700; }
+  .answer-box {
+    background: linear-gradient(135deg, var(--surface2), var(--bg));
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 12px;
+    padding: 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .answer-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+  }
+  .answer-text { font-size: 0.93rem; line-height: 1.75; color: var(--text); white-space: pre-wrap; }
+  .source-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .source-pill { padding: 4px 11px; border-radius: 100px; font-size: 0.7rem; font-family: 'Space Mono', monospace; border: 1px solid; font-weight: 700; }
+  .flow-arrow { text-align: center; color: var(--text-muted); font-size: 1.3rem; margin: 8px 0; animation: bounce 1.5s infinite; }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(4px); }
+  }
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+    margin: 9px 0;
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(124,58,237,0.6);
+  }
+  .range-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); font-family: 'Space Mono', monospace; }
+  .tag {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-size: 9px;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-left: 4px;
+  }
+  .spinner {
+    display: inline-block;
+    width: 13px; height: 13px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent2);
+    border-radius: 50%;
+    animation: spin 0.65s linear infinite;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (max-width: 620px) {
+    .pipeline-step { padding: 9px 5px; font-size: 0.65rem; }
+    .chunks-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb glow-orb-1"></div>
+<div class="glow-orb glow-orb-2"></div>
+
+<div class="container">
+
+  <header>
+    <div class="badge"><span class="badge-dot"></span>Interactive Learning Tool</div>
+    <h1>RAG Pipeline<br>Simulator</h1>
+    <p class="subtitle">Walk through every step of Retrieval-Augmented Generation — from raw documents to grounded answers.</p>
+  </header>
+
+  <div class="pipeline-nav" id="pipelineNav">
+    <div class="pipeline-step active" data-step="0" onclick="goToStep(0)"><span class="step-num">01</span>Documents</div>
+    <div class="pipeline-step" data-step="1" onclick="goToStep(1)"><span class="step-num">02</span>Chunking</div>
+    <div class="pipeline-step" data-step="2" onclick="goToStep(2)"><span class="step-num">03</span>Embeddings</div>
+    <div class="pipeline-step" data-step="3" onclick="goToStep(3)"><span class="step-num">04</span>Vector Store</div>
+    <div class="pipeline-step" data-step="4" onclick="goToStep(4)"><span class="step-num">05</span>Retrieval</div>
+    <div class="pipeline-step" data-step="5" onclick="goToStep(5)"><span class="step-num">06</span>Generation</div>
+  </div>
+
+  <div class="progress-ring"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+  <!-- STEP 0 -->
+  <div class="stage-panel active" id="stage-0">
+    <div class="step-indicator">
+      <span class="step-badge">STEP 01</span>
+      <span class="step-title">Load Your Knowledge Base</span>
+    </div>
+    <div class="info-box">RAG starts with a <strong>corpus of documents</strong> — your knowledge base. These are the sources the LLM will consult when answering questions. Edit the sample documents below or paste your own.</div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(124,58,237,0.15);">📄</div>
+        <div><div class="card-title">Knowledge Base Documents</div><div class="card-desc">Add up to 3 documents as your corpus</div></div>
+      </div>
+      <label>Document 1 — Transformers</label>
+      <textarea id="doc1">The transformer architecture was introduced in the paper "Attention Is All You Need" by Vaswani et al. in 2017. It relies entirely on self-attention mechanisms, dispensing with recurrence and convolutions. Transformers process input sequences in parallel, making them significantly faster to train than RNNs. The architecture consists of an encoder and a decoder, each made of stacked layers with multi-head attention and feed-forward networks.</textarea>
+      <br><br>
+      <label>Document 2 — Large Language Models</label>
+      <textarea id="doc2">Large Language Models (LLMs) are trained on massive text corpora using self-supervised learning. Models like GPT-4, Claude, and Llama learn to predict the next token in a sequence. Scaling laws suggest that model performance improves predictably with more data, compute, and parameters. LLMs exhibit emergent capabilities such as few-shot learning, reasoning, and code generation that are not present in smaller models.</textarea>
+      <br><br>
+      <label>Document 3 — RAG</label>
+      <textarea id="doc3">Retrieval-Augmented Generation (RAG) combines a retrieval system with a language model. It was introduced by Lewis et al. in 2020 at Facebook AI Research. RAG retrieves relevant documents from an external knowledge base and provides them as context to the LLM at inference time. This allows the model to answer questions grounded in up-to-date information without retraining. RAG significantly reduces hallucinations by anchoring responses to retrieved facts.</textarea>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="loadDocs()">Load Documents →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="stage-panel" id="stage-1">
+    <div class="step-indicator">
+      <span class="step-badge">STEP 02</span>
+      <span class="step-title">Chunking</span>
+    </div>
+    <div class="info-box">Documents are split into smaller <strong>chunks</strong> because embedding models have token limits, and retrieval works best on focused passages. <strong>Chunk size</strong> and <strong>overlap</strong> are key hyperparameters that trade precision for context.</div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(6,182,212,0.15);">✂️</div>
+        <div><div class="card-title">Chunking Configuration</div><div class="card-desc">Tune how documents are split into retrievable pieces</div></div>
+      </div>
+      <label>Chunk Size (words)</label>
+      <input type="range" id="chunkSize" min="10" max="60" value="30" oninput="updateChunkLabel()">
+      <div class="range-labels"><span>10 (fine-grained)</span><span id="chunkSizeLabel">30 words</span><span>60 (coarse)</span></div>
+      <br>
+      <label>Overlap (words)</label>
+      <input type="range" id="chunkOverlap" min="0" max="15" value="5" oninput="updateOverlapLabel()">
+      <div class="range-labels"><span>0 (none)</span><span id="chunkOverlapLabel">5 words</span><span>15</span></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="doChunking()">Chunk Documents →</button>
+      </div>
+    </div>
+    <div id="chunksOutput"></div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="stage-panel" id="stage-2">
+    <div class="step-indicator">
+      <span class="step-badge">STEP 03</span>
+      <span class="step-title">Embedding</span>
+    </div>
+    <div class="info-box">Each chunk is converted into a <strong>dense vector</strong> — a list of numbers capturing its semantic meaning. Similar concepts produce nearby vectors in high-dimensional space. Embeddings are generated by models like <strong>text-embedding-3-small</strong> (1536-dim) or <strong>BAAI/bge-large</strong>.</div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(245,158,11,0.15);">🔢</div>
+        <div><div class="card-title">Embedding Model</div><div class="card-desc">Converts each chunk text → a high-dimensional float vector</div></div>
+      </div>
+      <div id="embeddingsList"><p style="color:var(--text-muted);font-size:0.82rem;">Click generate to visualize embeddings for each chunk.</p></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="doEmbeddings()">Generate Embeddings →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="stage-panel" id="stage-3">
+    <div class="step-indicator">
+      <span class="step-badge">STEP 04</span>
+      <span class="step-title">Vector Store (Index)</span>
+    </div>
+    <div class="info-box">Embeddings are stored in a <strong>vector database</strong> (e.g., Pinecone, Weaviate, Chroma, pgvector, FAISS). At query time the store performs fast <strong>Approximate Nearest Neighbour (ANN)</strong> search — cosine or dot-product similarity — over millions of vectors in milliseconds.</div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(16,185,129,0.15);">🗄️</div>
+        <div><div class="card-title">Vector Index</div><div class="card-desc">All chunk embeddings stored and indexed for ANN search</div></div>
+      </div>
+      <div id="vectorStoreOutput"><p style="color:var(--text-muted);font-size:0.82rem;">Click to index all vectors.</p></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="indexVectors()">Index Vectors →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="stage-panel" id="stage-4">
+    <div class="step-indicator">
+      <span class="step-badge">STEP 05</span>
+      <span class="step-title">Query and Retrieval</span>
+    </div>
+    <div class="info-box">At inference time, the user's query is <strong>embedded with the same model</strong>, then compared to all stored vectors via cosine similarity. The <strong>top-k most similar chunks</strong> are retrieved and will be provided as context to the LLM.</div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(239,68,68,0.15);">🔍</div>
+        <div><div class="card-title">User Query</div><div class="card-desc">Your question gets embedded and matched against the index</div></div>
+      </div>
+      <label>Your Question</label>
+      <input type="text" id="userQuery" value="What is RAG and how does it reduce hallucinations?" placeholder="Ask something about the documents...">
+      <br><br>
+      <label>Top-K Chunks to Retrieve</label>
+      <input type="range" id="topK" min="1" max="5" value="3" oninput="document.getElementById('topKLabel').textContent = this.value">
+      <div class="range-labels"><span>1</span><span id="topKLabel">3</span><span>5</span></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="doRetrieval()">Retrieve Chunks →</button>
+      </div>
+    </div>
+    <div id="retrievalOutput"></div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="stage-panel" id="stage-5">
+    <div class="step-indicator">
+      <span class="step-badge">STEP 06</span>
+      <span class="step-title">Augmented Generation</span>
+    </div>
+    <div class="info-box">The retrieved chunks are <strong>injected into the LLM prompt</strong> as grounding context. The model generates an answer using both its parametric knowledge and the retrieved passages — this is the <strong>"Augmented Generation"</strong> in RAG.</div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(124,58,237,0.15);">📋</div>
+        <div><div class="card-title">Assembled Prompt</div><div class="card-desc">System prompt + retrieved context + user query sent to the LLM</div></div>
+      </div>
+      <div id="contextWindowDisplay"></div>
+    </div>
+    <div class="flow-arrow">⬇</div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(16,185,129,0.15);">✨</div>
+        <div><div class="card-title">LLM Response</div><div class="card-desc">Grounded answer with source attribution</div></div>
+      </div>
+      <div id="llmOutput">
+        <button class="btn btn-accent" onclick="generateAnswer()">Generate Answer →</button>
+      </div>
+    </div>
+    <div class="card" style="border-color:rgba(6,182,212,0.25);margin-top:20px;">
+      <div class="card-header">
+        <div class="card-icon" style="background:rgba(6,182,212,0.15);">🔄</div>
+        <div><div class="card-title">Full Pipeline Summary</div><div class="card-desc">End-to-end RAG flow recap</div></div>
+      </div>
+      <div id="pipelineSummary"></div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="resetAll()">↩ Start Over</button>
+        <button class="btn btn-secondary" onclick="goToStep(4)">← New Query</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const state = {
+  currentStep: 0,
+  docs: [],
+  chunks: [],
+  embeddings: [],
+  indexed: false,
+  query: '',
+  topK: 3,
+  retrieved: [],
+};
+
+const COLORS = [
+  { bg: 'rgba(124,58,237,0.18)', border: '#7c3aed', text: '#c4b5fd' },
+  { bg: 'rgba(6,182,212,0.18)',  border: '#06b6d4', text: '#67e8f9' },
+  { bg: 'rgba(245,158,11,0.18)', border: '#f59e0b', text: '#fcd34d' },
+  { bg: 'rgba(239,68,68,0.18)',  border: '#ef4444', text: '#fca5a5' },
+  { bg: 'rgba(16,185,129,0.18)', border: '#10b981', text: '#6ee7b7' },
+];
+
+function goToStep(n) {
+  if (n > state.currentStep && !canAdvanceTo(n)) return;
+  document.querySelectorAll('.stage-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('stage-' + n).classList.add('active');
+  document.querySelectorAll('.pipeline-step').forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i < n) s.classList.add('done');
+    if (i === n) s.classList.add('active');
+  });
+  state.currentStep = n;
+  document.getElementById('progressFill').style.width = (n / 5 * 100) + '%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function canAdvanceTo(n) {
+  if (n <= 1) return state.docs.length > 0;
+  if (n <= 2) return state.chunks.length > 0;
+  if (n <= 3) return state.embeddings.length > 0;
+  if (n <= 4) return state.indexed;
+  if (n <= 5) return state.retrieved.length > 0;
+  return true;
+}
+
+function loadDocs() {
+  state.docs = ['doc1','doc2','doc3']
+    .map(id => document.getElementById(id).value.trim())
+    .filter(d => d.length > 0);
+  if (!state.docs.length) { alert('Please add at least one document.'); return; }
+  goToStep(1);
+}
+
+function updateChunkLabel() { document.getElementById('chunkSizeLabel').textContent = document.getElementById('chunkSize').value + ' words'; }
+function updateOverlapLabel() { document.getElementById('chunkOverlapLabel').textContent = document.getElementById('chunkOverlap').value + ' words'; }
+
+function doChunking() {
+  const chunkSize = +document.getElementById('chunkSize').value;
+  const overlap   = +document.getElementById('chunkOverlap').value;
+  state.chunks = [];
+  state.docs.forEach((doc, docIdx) => {
+    const words = doc.split(/\s+/);
+    let i = 0, ci = 0;
+    while (i < words.length) {
+      const slice = words.slice(i, i + chunkSize);
+      if (slice.length < 4) break;
+      state.chunks.push({ id: `D${docIdx+1}-C${ci+1}`, docIdx, text: slice.join(' '), colorIdx: state.chunks.length % COLORS.length });
+      i += chunkSize - overlap;
+      ci++;
+    }
+  });
+  renderChunks();
+  setTimeout(() => goToStep(2), 350);
+}
+
+function renderChunks() {
+  const out = document.getElementById('chunksOutput');
+  let html = `<div class="card"><div class="card-header">
+    <div class="card-icon" style="background:rgba(6,182,212,0.15);">📦</div>
+    <div><div class="card-title">${state.chunks.length} Chunks Created</div>
+    <div class="card-desc">Each coloured block is one chunk ready for embedding</div></div>
+  </div><div class="chunks-grid">`;
+  state.chunks.forEach(ch => {
+    const c = COLORS[ch.colorIdx];
+    html += `<div class="chunk" style="background:${c.bg};border-color:${c.border};color:${c.text};">
+      <div class="chunk-id" style="color:${c.border};">${ch.id}</div>${esc(ch.text)}</div>`;
+  });
+  html += `</div></div>`;
+  out.innerHTML = html;
+}
+
+function doEmbeddings() {
+  state.embeddings = state.chunks.map(ch => ({
+    chunkId: ch.id, colorIdx: ch.colorIdx, text: ch.text, vector: seededVec(ch.text, 24)
+  }));
+  renderEmbeddings();
+  setTimeout(() => goToStep(3), 350);
+}
+
+function seededVec(text, dims) {
+  let seed = 0;
+  for (let c of text) seed = (seed * 31 + c.charCodeAt(0)) & 0xffffffff;
+  const v = [];
+  for (let i = 0; i < dims; i++) {
+    seed = (seed * 1664525 + 1013904223) & 0xffffffff;
+    v.push(((seed >>> 0) / 0xffffffff) * 2 - 1);
+  }
+  const mag = Math.sqrt(v.reduce((a,b) => a + b*b, 0));
+  return v.map(x => x / mag);
+}
+
+function renderEmbeddings() {
+  const list = document.getElementById('embeddingsList');
+  let html = '';
+  state.embeddings.forEach(em => {
+    const c = COLORS[em.colorIdx];
+    html += `<div style="margin-bottom:18px;">
+      <div style="font-size:0.77rem;font-weight:700;color:${c.border};font-family:'Space Mono',monospace;margin-bottom:5px;">${em.chunkId}</div>
+      <div style="font-size:0.71rem;color:var(--text-muted);margin-bottom:5px;font-family:'Space Mono',monospace;">"${esc(em.text.substring(0,65))}…"</div>
+      <div class="embed-visual">
+        ${em.vector.map(v => {
+          const w = Math.abs(v) * 21 + 5;
+          const bg = v > 0 ? c.border : '#374151';
+          return `<div class="embed-bar" style="width:${w}px;background:${bg};opacity:${0.45+Math.abs(v)*0.55};" title="${v.toFixed(3)}"></div>`;
+        }).join('')}
+      </div>
+      <div style="font-size:9px;color:var(--text-muted);margin-top:4px;font-family:'Space Mono',monospace;">
+        [${em.vector.slice(0,4).map(v=>v.toFixed(3)).join(', ')}, … (${em.vector.length}-dim)]
+      </div>
+    </div>`;
+  });
+  list.innerHTML = html;
+}
+
+function indexVectors() {
+  state.indexed = true;
+  let html = `<table class="vector-table">
+    <thead><tr><th>Chunk ID</th><th>Text Preview</th><th>Vector Sample (6 dims)</th><th>Dims</th></tr></thead><tbody>`;
+  state.embeddings.forEach(em => {
+    const c = COLORS[em.colorIdx];
+    const dots = em.vector.slice(0,6).map(v => {
+      const intensity = Math.floor(Math.abs(v) * 180 + 55);
+      const bg = v > 0 ? `rgb(${intensity},${Math.floor(intensity*0.35)},255)` : `rgb(255,${Math.floor(intensity*0.35)},${intensity})`;
+      return `<div class="vec-dot" style="background:${bg};" title="${v.toFixed(3)}"></div>`;
+    }).join('');
+    html += `<tr>
+      <td><span style="color:${c.border};font-weight:700;">${em.chunkId}</span></td>
+      <td style="max-width:200px;">${esc(em.text.substring(0,65))}…</td>
+      <td><div class="vec-preview">${dots}</div></td>
+      <td style="color:var(--accent2);">${em.vector.length}</td>
+    </tr>`;
+  });
+  html += `</tbody></table>
+  <div style="margin-top:13px;font-size:0.78rem;color:var(--text-muted);">
+    ✅ ${state.embeddings.length} vectors indexed — ANN index is ready for cosine similarity search.
+  </div>`;
+  document.getElementById('vectorStoreOutput').innerHTML = html;
+  setTimeout(() => goToStep(4), 450);
+}
+
+function doRetrieval() {
+  state.query = document.getElementById('userQuery').value.trim();
+  state.topK = +document.getElementById('topK').value;
+  if (!state.query) { alert('Please enter a question.'); return; }
+
+  const qVec = seededVec(state.query, 24);
+  const scored = state.embeddings.map(em => {
+    const sim = cosineSim(qVec, em.vector);
+    const boost = queryOverlap(state.query, em.text);
+    return { ...em, score: Math.min(0.99, Math.abs(sim) * 0.45 + 0.45 + boost * 0.22) };
+  }).sort((a,b) => b.score - a.score);
+
+  state.retrieved = scored.slice(0, state.topK);
+  renderRetrieval(scored);
+  renderContextWindow();
+  renderPipelineSummary();
+  setTimeout(() => goToStep(5), 400);
+}
+
+function queryOverlap(q, text) {
+  const qw = new Set(q.toLowerCase().split(/\W+/));
+  const hits = text.toLowerCase().split(/\W+/).filter(w => w.length > 3 && qw.has(w)).length;
+  return Math.min(1, hits / 5);
+}
+
+function cosineSim(a, b) {
+  let dot=0, ma=0, mb=0;
+  for (let i=0; i<a.length; i++) { dot+=a[i]*b[i]; ma+=a[i]*a[i]; mb+=b[i]*b[i]; }
+  return dot / (Math.sqrt(ma)*Math.sqrt(mb) + 1e-8);
+}
+
+function renderRetrieval(scored) {
+  const max = Math.max(...scored.map(s=>s.score));
+  let html = `<div class="card">
+    <div class="card-header">
+      <div class="card-icon" style="background:rgba(239,68,68,0.15);">📊</div>
+      <div><div class="card-title">Cosine Similarity Scores</div>
+      <div class="card-desc">Query embedding vs each chunk — top-${state.topK} retrieved</div></div>
+    </div>`;
+  scored.forEach((s, i) => {
+    const c = COLORS[s.colorIdx];
+    const pct = (s.score / max * 100).toFixed(1);
+    const isTop = i < state.topK;
+    html += `<div class="similarity-bar-wrap">
+      <div class="similarity-header">
+        <span style="color:${c.border};font-family:'Space Mono',monospace;font-weight:700;font-size:0.75rem;">
+          ${isTop?'✓ ':''}${s.chunkId}
+          ${isTop?`<span class="tag" style="background:${c.bg};color:${c.border};border:1px solid ${c.border}44;">RETRIEVED</span>`:''}
+        </span>
+        <span style="font-family:'Space Mono',monospace;font-size:0.8rem;color:${isTop?c.border:'var(--text-muted)'};">
+          ${(s.score*100).toFixed(1)}%
+        </span>
+      </div>
+      <div class="similarity-bar-bg">
+        <div class="similarity-bar-fill" style="width:${pct}%;background:${isTop?c.border:'var(--border)'};"></div>
+      </div>
+      <div style="font-size:0.7rem;color:var(--text-muted);font-family:'Space Mono',monospace;margin-top:3px;">"${esc(s.text.substring(0,75))}…"</div>
+    </div>`;
+  });
+  html += `<div style="margin-top:12px;font-size:0.8rem;color:var(--text-muted);">
+    🎯 Top <strong style="color:var(--accent2);">${state.topK}</strong> chunks will be injected into the LLM context window.
+  </div></div>`;
+  document.getElementById('retrievalOutput').innerHTML = html;
+}
+
+function renderContextWindow() {
+  const retrieved = state.retrieved.map(r => `[Chunk ${r.chunkId}]\n${r.text}`).join('\n\n');
+  document.getElementById('contextWindowDisplay').innerHTML = `<div class="context-window">
+    <div class="context-section system">
+      <div class="context-label" style="color:var(--accent);">System Prompt</div>
+      You are a helpful assistant. Answer the user question using ONLY the provided context chunks. Cite the chunk IDs you draw from. If the context is insufficient, say so.
+    </div>
+    <div class="context-section retrieved">
+      <div class="context-label" style="color:var(--accent2);">Retrieved Context — ${state.retrieved.length} chunks</div>
+      ${esc(retrieved)}
+    </div>
+    <div class="context-section query">
+      <div class="context-label" style="color:var(--accent3);">User Query</div>
+      ${esc(state.query)}
+    </div>
+  </div>`;
+}
+
+function generateAnswer() {
+  const btn = document.querySelector('#llmOutput .btn');
+  if (btn) { btn.innerHTML = `<span class="spinner"></span> Generating…`; btn.disabled = true; }
+  setTimeout(() => {
+    const sentences = state.retrieved.flatMap(r => r.text.split('. ').map(s=>s.trim()).filter(s=>s.length>20));
+    const picked = sentences.slice(0, Math.min(4, sentences.length));
+    let ans = picked.join('. ');
+    if (!ans.endsWith('.')) ans += '.';
+    const ids = state.retrieved.map(r=>r.chunkId).join(', ');
+    ans += `\n\n[Grounded on chunks: ${ids}]`;
+
+    const pills = state.retrieved.map(r => {
+      const c = COLORS[r.colorIdx];
+      return `<span class="source-pill" style="color:${c.border};border-color:${c.border}55;background:${c.bg};">📎 ${r.chunkId}</span>`;
+    }).join('');
+
+    document.getElementById('llmOutput').innerHTML = `
+      <div class="answer-box">
+        <div class="answer-text" id="answerText"></div>
+        <div style="margin-top:14px;font-size:0.74rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;">Sources</div>
+        <div class="source-pills">${pills}</div>
+      </div>`;
+    typewriter('answerText', ans, 20);
+  }, 850);
+}
+
+function renderPipelineSummary() {
+  document.getElementById('pipelineSummary').innerHTML = `
+    <div style="display:grid;gap:9px;font-size:0.81rem;line-height:1.65;">
+      ${[
+        ['var(--accent)',  `Documents loaded: ${state.docs.length} doc${state.docs.length>1?'s':''}`],
+        ['var(--accent2)', `Chunked into: ${state.chunks.length} chunks (size ${document.getElementById('chunkSize').value}w, overlap ${document.getElementById('chunkOverlap').value}w)`],
+        ['var(--accent3)', `Embeddings: ${state.embeddings.length} vectors × ${state.embeddings[0]?.vector.length} dims`],
+        ['var(--success)', `Vector index: ANN index over ${state.embeddings.length} entries`],
+        ['#ef4444',        `Retrieved: top-${state.topK} chunks for "${state.query}"`],
+        ['#c4b5fd',        `Generated: answer grounded in retrieved context`],
+      ].map(([col,txt],i) => `<div style="display:flex;gap:10px;align-items:flex-start;">
+        <span style="color:${col};font-weight:700;min-width:20px;">${['①','②','③','④','⑤','⑥'][i]}</span>
+        <span style="color:var(--text-muted);">${txt}</span>
+      </div>`).join('')}
+    </div>`;
+}
+
+function typewriter(id, text, speed) {
+  const el = document.getElementById(id);
+  el.textContent = '';
+  let i = 0;
+  const t = setInterval(() => { el.textContent += text[i++]; if (i >= text.length) clearInterval(t); }, speed);
+}
+
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function resetAll() {
+  Object.assign(state, { docs:[], chunks:[], embeddings:[], indexed:false, query:'', retrieved:[] });
+  ['chunksOutput','embeddingsList','vectorStoreOutput','retrievalOutput','contextWindowDisplay'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = '';
+  });
+  document.getElementById('llmOutput').innerHTML = `<button class="btn btn-accent" onclick="generateAnswer()">Generate Answer →</button>`;
+  goToStep(0);
+}
+
+updateChunkLabel();
+updateOverlapLabel();
+</script>
+</body>
+</html>

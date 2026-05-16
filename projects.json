@@ -11,7 +11,7 @@
     "id": "pinky-network",
     "title": "Smart Zero - Pinky",
     "subtitle": "Rethinking managing tasks",
-    "thumbnail": "apps/pink-network/cover.svg",
+    "thumbnail": "apps/pinky-network/cover.svg",
     "tags": ["Product Design", "Productivity", "Prototyping"],
     "year": "2026"
   },
@@ -21,6 +21,14 @@
     "subtitle": "Rethinking managing tasks",
     "thumbnail": "apps/sheril-network/cover.svg",
     "tags": ["Product Design", "Productivity", "Prototyping"],
+    "year": "2026"
+  },
+  {
+    "id": "rag-simulator",
+    "title": "RAG - Simulator",
+    "subtitle": "Learn how RAG works",
+    "thumbnail": "apps/rag-simulator/cover.svg",
+    "tags": ["RAG", "AI", "Prototyping"],
     "year": "2026"
   }
 ]
