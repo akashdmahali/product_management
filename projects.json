@@ -30,5 +30,13 @@
     "thumbnail": "apps/rag-simulator/cover.svg",
     "tags": ["RAG", "AI", "Prototyping"],
     "year": "2026"
+  },
+  {
+    "id": "telecom",
+    "title": "Telecom Atlas",
+    "subtitle": "Learn how a telecom company actually works",
+    "thumbnail": "apps/telecom/cover.svg",
+    "tags": ["Telecom", "Domain", "BSS"],
+    "year": "2026"
   }
 ]

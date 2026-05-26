@@ -1,0 +1,38 @@
+{
+  "title": "Telecom Atlas",
+  "subtitle": "How a telecom company actually works",
+  "role": "Telecom · Domain · BSS",
+  "timeline": "May 2026",
+  "overview": "From the SIM in your pocket to the subsea cable under the ocean — and the software empire (BSS & OSS) that turns signals into money. Built to zoom out to a single map, or zoom in until you could run the place.",
+
+  "sections": [
+    {
+      "heading": "The Problem",
+      "body": "How a telecom company actually works"
+    },
+    {
+      "heading": "Key Insight",
+      "body": "A field guide to the business of connectivity"
+    }
+  ],
+
+  "links": [
+    {
+      "label": "Interactive Prototype",
+      "url": "https://apps.ex-machina-2030.com/apps/telecom/demo",
+      "type": "prototype"
+    },
+    {
+      "label": "Research & Problem Framing",
+      "url": "#",
+      "type": "doc"
+    },
+    {
+      "label": "Design Exploration Sketches",
+      "url": "#",
+      "type": "slides"
+    }
+  ],
+
+  "prototype_embed": "https://apps.ex-machina-2030.com/apps/telecom/demo"
+}

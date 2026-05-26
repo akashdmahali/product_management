@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Telecom Atlas — BSS, OSS & The Business of Connectivity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#070b12; --ink2:#0c121d; --panel:#111927; --panel2:#16202f;
+  --line:#22304a; --line2:#2e405e;
+  --txt:#dfe7f2; --txt-dim:#93a2ba; --txt-faint:#637191;
+  --teal:#37e0c8; --teal-d:#1f9f8c; --amber:#ffb24d; --coral:#ff6b6b;
+  --violet:#9b8cff; --green:#5fd17a;
+  --disp:'Bricolage Grotesque',serif; --body:'Hanken Grotesk',sans-serif; --mono:'IBM Plex Mono',monospace;
+  --maxw:1080px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{
+  background:var(--ink); color:var(--txt); font-family:var(--body);
+  line-height:1.62; font-size:16.5px; -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(900px 500px at 12% -5%, rgba(55,224,200,.07), transparent 60%),
+    radial-gradient(800px 600px at 95% 8%, rgba(155,140,255,.06), transparent 55%),
+    linear-gradient(rgba(34,48,74,.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34,48,74,.18) 1px, transparent 1px);
+  background-size:auto,auto,46px 46px,46px 46px;
+  background-attachment:fixed;
+}
+::selection{background:var(--teal);color:var(--ink)}
+
+/* ---------- top bar ---------- */
+header.bar{
+  position:sticky;top:0;z-index:100;backdrop-filter:blur(14px);
+  background:rgba(7,11,18,.82);border-bottom:1px solid var(--line);
+}
+.bar-in{max-width:var(--maxw);margin:0 auto;padding:11px 22px;display:flex;align-items:center;gap:18px}
+.brand{font-family:var(--mono);font-size:13px;letter-spacing:.5px;color:var(--txt);white-space:nowrap}
+.brand b{color:var(--teal)}
+.brand .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--teal);margin-right:7px;box-shadow:0 0 10px var(--teal);animation:pulse 2.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+nav.secnav{display:flex;gap:3px;margin-left:auto;flex-wrap:wrap;justify-content:flex-end}
+nav.secnav a{
+  font-family:var(--mono);font-size:11px;color:var(--txt-dim);text-decoration:none;
+  padding:5px 8px;border-radius:6px;transition:.18s;white-space:nowrap;
+}
+nav.secnav a:hover{color:var(--teal);background:rgba(55,224,200,.08)}
+nav.secnav a.on{color:var(--ink);background:var(--teal)}
+
+/* ---------- audience toggle ---------- */
+.aud{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:30px;padding:3px;background:var(--ink2)}
+.aud button{
+  font-family:var(--mono);font-size:11px;letter-spacing:.4px;border:none;cursor:pointer;
+  padding:6px 13px;border-radius:30px;background:transparent;color:var(--txt-dim);transition:.2s;
+}
+.aud button.act{background:var(--teal);color:var(--ink);font-weight:600;box-shadow:0 0 14px rgba(55,224,200,.4)}
+.aud button:not(.act):hover{color:var(--txt)}
+
+/* ---------- layout ---------- */
+main{max-width:var(--maxw);margin:0 auto;padding:0 22px 120px}
+section{padding:72px 0 24px;scroll-margin-top:84px}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.kicker::before{content:"";width:26px;height:1px;background:var(--teal)}
+h1{font-family:var(--disp);font-weight:800;line-height:1.02;letter-spacing:-1.5px}
+h2{font-family:var(--disp);font-weight:800;font-size:clamp(28px,4.4vw,46px);line-height:1.04;letter-spacing:-1px;margin-bottom:18px}
+h3{font-family:var(--disp);font-weight:700;font-size:23px;letter-spacing:-.4px;margin:30px 0 10px;color:#fff}
+h4{font-family:var(--disp);font-weight:700;font-size:17.5px;letter-spacing:-.2px;margin:4px 0 6px;color:#fff}
+p{margin-bottom:14px;color:var(--txt)}
+.lead{font-size:18.5px;color:var(--txt-dim);max-width:64ch}
+a.inl{color:var(--teal);text-decoration:none;border-bottom:1px dotted var(--teal-d)}
+strong{color:#fff;font-weight:700}
+em{color:var(--amber);font-style:normal;font-weight:600}
+code{font-family:var(--mono);font-size:.86em;background:var(--ink2);border:1px solid var(--line);padding:1px 6px;border-radius:5px;color:var(--teal)}
+
+/* ---------- hero ---------- */
+.hero{padding:64px 0 30px;border-bottom:1px solid var(--line)}
+.hero h1{font-size:clamp(40px,8vw,86px);margin:10px 0 18px}
+.hero h1 .g{background:linear-gradient(100deg,var(--teal),var(--violet));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero-meta{display:flex;gap:26px;flex-wrap:wrap;margin-top:30px;font-family:var(--mono);font-size:12px;color:var(--txt-faint)}
+.hero-meta span b{color:var(--teal);font-weight:600}
+
+/* ---------- audience-conditional text ---------- */
+.eli5,.pro{display:none}
+body[data-aud="eli5"] .eli5{display:block}
+body[data-aud="pro"] .pro{display:block}
+.modeflag{font-family:var(--mono);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:7px}
+.eli5 .modeflag{background:rgba(95,209,122,.14);color:var(--green);border:1px solid rgba(95,209,122,.3)}
+.pro .modeflag{background:rgba(155,140,255,.14);color:var(--violet);border:1px solid rgba(155,140,255,.3)}
+
+/* ---------- cards & panels ---------- */
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:820px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--ink2));border:1px solid var(--line);
+  border-radius:14px;padding:20px 20px 18px;transition:.2s;position:relative;overflow:hidden;
+}
+.card:hover{border-color:var(--teal-d);transform:translateY(-2px)}
+.card .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--teal)}
+.card.amber .tag{color:var(--amber)} .card.coral .tag{color:var(--coral)} .card.violet .tag{color:var(--violet)}
+.card p{font-size:14.5px;color:var(--txt-dim);margin-bottom:0}
+.card .ico{font-family:var(--mono);font-size:22px;color:var(--teal);margin-bottom:6px}
+
+/* zoom-in detail blocks */
+details.zoom{border:1px solid var(--line);border-radius:12px;background:var(--ink2);margin:12px 0;overflow:hidden}
+details.zoom>summary{
+  list-style:none;cursor:pointer;padding:15px 18px;font-family:var(--disp);font-weight:700;font-size:18px;color:#fff;
+  display:flex;align-items:center;gap:12px;transition:.18s;
+}
+details.zoom>summary::-webkit-details-marker{display:none}
+details.zoom>summary:hover{background:var(--panel)}
+details.zoom>summary .zi{font-family:var(--mono);font-size:12px;color:var(--teal);transition:.25s;width:18px}
+details.zoom[open]>summary .zi{transform:rotate(45deg)}
+details.zoom>summary .zlabel{font-family:var(--mono);font-size:10.5px;color:var(--txt-faint);margin-left:auto;letter-spacing:1px;text-transform:uppercase;font-weight:400}
+.zoom-body{padding:4px 20px 20px;border-top:1px solid var(--line)}
+.zoom-body p{font-size:15px}
+
+/* callouts */
+.india{border-left:3px solid var(--amber);background:linear-gradient(90deg,rgba(255,178,77,.07),transparent);padding:14px 16px;border-radius:0 10px 10px 0;margin:16px 0}
+.india .tag{font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:4px}
+.india p{font-size:14.5px;color:var(--txt);margin:0}
+.keypt{border-left:3px solid var(--teal);background:linear-gradient(90deg,rgba(55,224,200,.06),transparent);padding:13px 16px;border-radius:0 10px 10px 0;margin:14px 0}
+.keypt p{margin:0;font-size:15px}
+.warn{border-left:3px solid var(--coral);background:linear-gradient(90deg,rgba(255,107,107,.06),transparent);padding:13px 16px;border-radius:0 10px 10px 0;margin:14px 0}
+.warn p{margin:0;font-size:15px}
+
+/* lists */
+ul.ds{list-style:none;margin:8px 0 14px}
+ul.ds li{padding:6px 0 6px 24px;position:relative;font-size:15px;color:var(--txt);border-bottom:1px dashed var(--line)}
+ul.ds li:last-child{border-bottom:none}
+ul.ds li::before{content:"▸";position:absolute;left:2px;color:var(--teal)}
+ul.ds li b{color:#fff}
+
+/* tables */
+.tbl{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.tbl th{background:var(--panel);text-align:left;padding:10px 13px;font-family:var(--mono);font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:var(--teal);border-bottom:1px solid var(--line)}
+.tbl td{padding:10px 13px;border-bottom:1px solid var(--line);color:var(--txt-dim);vertical-align:top}
+.tbl td b{color:#fff}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(55,224,200,.03)}
+
+/* diagram shells */
+.diagram{background:var(--ink2);border:1px solid var(--line);border-radius:14px;padding:22px;margin:18px 0;overflow-x:auto}
+.dcap{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--txt-faint);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.dcap::before{content:"▦";color:var(--teal)}
+svg{display:block;max-width:100%;height:auto}
+svg text{font-family:var(--mono)}
+
+/* stack map (hero diagram) */
+.stack{display:flex;flex-direction:column;gap:8px}
+.layer{border:1px solid var(--line);border-radius:11px;padding:14px 18px;background:linear-gradient(180deg,var(--panel),var(--ink2));cursor:pointer;transition:.2s;display:flex;align-items:center;gap:16px;text-decoration:none}
+.layer:hover{border-color:var(--teal);transform:translateX(4px);box-shadow:-6px 0 0 -3px var(--teal)}
+.layer .lnum{font-family:var(--mono);font-size:11px;color:var(--teal);min-width:28px}
+.layer .ltitle{font-family:var(--disp);font-weight:700;font-size:18px;color:#fff;min-width:150px}
+.layer .ldesc{font-size:13.5px;color:var(--txt-dim);flex:1}
+.layer .larrow{font-family:var(--mono);color:var(--txt-faint);transition:.2s}
+.layer:hover .larrow{color:var(--teal);transform:translateX(3px)}
+.layer.l-cust{border-left:4px solid var(--green)}
+.layer.l-bss{border-left:4px solid var(--teal)}
+.layer.l-oss{border-left:4px solid var(--violet)}
+.layer.l-net{border-left:4px solid var(--amber)}
+.layer.l-sup{border-left:4px solid var(--coral)}
+
+.stat{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:22px 0}
+@media(max-width:820px){.stat{grid-template-columns:1fr 1fr}}
+.stat .s{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--ink2)}
+.stat .s .n{font-family:var(--disp);font-weight:800;font-size:30px;color:var(--teal);line-height:1}
+.stat .s .l{font-size:12.5px;color:var(--txt-dim);margin-top:6px}
+
+footer{max-width:var(--maxw);margin:0 auto;padding:40px 22px 80px;border-top:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--txt-faint)}
+footer b{color:var(--teal)}
+.toc-jump{position:fixed;right:18px;bottom:18px;z-index:90;background:var(--teal);color:var(--ink);font-family:var(--mono);font-size:11px;font-weight:600;padding:10px 14px;border-radius:30px;text-decoration:none;box-shadow:0 6px 24px rgba(0,0,0,.4);transition:.2s}
+.toc-jump:hover{transform:translateY(-2px)}
+.pathbox{background:linear-gradient(135deg,rgba(55,224,200,.08),rgba(155,140,255,.06));border:1px solid var(--teal-d);border-radius:16px;padding:26px;margin:20px 0}
+.steps{counter-reset:s;list-style:none;margin-top:16px}
+.steps li{counter-increment:s;position:relative;padding:14px 0 14px 52px;border-bottom:1px solid var(--line)}
+.steps li:last-child{border-bottom:none}
+.steps li::before{content:counter(s);position:absolute;left:0;top:12px;width:34px;height:34px;border-radius:9px;background:var(--teal);color:var(--ink);font-family:var(--mono);font-weight:600;display:flex;align-items:center;justify-content:center;font-size:15px}
+.steps li b{color:#fff;font-family:var(--disp);font-size:17px}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;padding:3px 10px;border:1px solid var(--line);border-radius:20px;color:var(--txt-dim);margin:3px 4px 3px 0}
+.pill.t{border-color:var(--teal-d);color:var(--teal)}
+.pill.a{border-color:var(--amber);color:var(--amber)}
+.pill.v{border-color:var(--violet);color:var(--violet)}
+
+/* ===== DEEP DIVE LAB ===== */
+.dlab-note{font-family:var(--mono);font-size:12.5px;color:var(--txt-dim);background:var(--ink2);border:1px dashed var(--line2);border-radius:11px;padding:13px 17px;margin:16px 0 22px;line-height:1.5}
+.dlab-note b{color:var(--amber)}
+.dlabcard{position:relative;overflow:visible}
+.dlabcard .num{font-family:var(--disp);font-weight:800;font-size:46px;color:var(--line);line-height:.8;position:absolute;top:16px;right:20px;pointer-events:none}
+.dlabcard h4{padding-right:46px}
+.diveBtn{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;font-weight:600;color:var(--ink);background:var(--teal);border:none;cursor:pointer;padding:9px 16px;border-radius:9px;transition:.2s;text-decoration:none;margin-top:14px}
+.diveBtn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(55,224,200,.3)}
+.diveBtn.ghost{background:transparent;color:var(--teal);border:1px solid var(--teal-d);margin-top:10px}
+.diveBtn.ghost:hover{background:rgba(55,224,200,.08);box-shadow:none;transform:none}
+
+/* overlay reading room */
+body.lock{overflow:hidden}
+.overlay{position:fixed;inset:0;z-index:200;background:var(--ink);
+  background-image:radial-gradient(1100px 520px at 50% -12%,rgba(55,224,200,.10),transparent 60%),radial-gradient(800px 500px at 92% 4%,rgba(155,140,255,.07),transparent 55%);
+  opacity:0;visibility:hidden;transform:translateY(16px);transition:opacity .28s,transform .28s,visibility .28s;overflow-y:auto;overscroll-behavior:contain}
+.overlay.open{opacity:1;visibility:visible;transform:none}
+.ovhead{position:sticky;top:0;z-index:5;backdrop-filter:blur(16px);background:rgba(7,11,18,.9);border-bottom:1px solid var(--teal-d)}
+.ovhead-in{max-width:var(--maxw);margin:0 auto;padding:12px 22px;display:flex;align-items:center;gap:16px}
+.backbtn{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--ink);background:var(--teal);border:none;cursor:pointer;padding:10px 16px;border-radius:30px;transition:.2s;display:flex;align-items:center;gap:7px;white-space:nowrap}
+.backbtn:hover{transform:translateX(-3px);box-shadow:0 0 18px rgba(55,224,200,.45)}
+.ovtitle{font-family:var(--mono);font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt-faint);line-height:1.3}
+.ovtitle b{color:#fff;display:block;font-family:var(--disp);font-size:17px;letter-spacing:-.3px;text-transform:none;margin-top:1px}
+.ovribbon{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber);border:1px solid var(--amber);border-radius:20px;padding:4px 11px;white-space:nowrap}
+.ovbody{max-width:var(--maxw);margin:0 auto;padding:30px 22px 130px}
+.ovbody h2{font-size:clamp(26px,4.4vw,42px);margin-bottom:14px}
+.ovbody section{padding:34px 0 8px;border:none}
+.youhere{font-family:var(--mono);font-size:11px;color:var(--green);background:rgba(95,209,122,.08);border:1px solid rgba(95,209,122,.25);border-radius:8px;padding:9px 14px;margin-bottom:20px;display:flex;align-items:center;gap:9px}
+.youhere::before{content:"◉";color:var(--green)}
+.bigexit{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;font-weight:600;color:var(--teal);background:var(--ink2);border:1px solid var(--teal-d);cursor:pointer;padding:12px 20px;border-radius:10px;transition:.2s;margin-top:30px}
+.bigexit:hover{background:rgba(55,224,200,.08);transform:translateX(-3px)}
+
+/* eTOM Level-2 grid */
+.etomwrap{overflow-x:auto;margin:16px 0}
+.etomgrid{width:100%;border-collapse:separate;border-spacing:5px;min-width:720px}
+.etomgrid th{font-family:var(--mono);font-size:9.5px;letter-spacing:.6px;text-transform:uppercase;padding:8px 6px;border-radius:7px;text-align:center;color:var(--ink);font-weight:600}
+.etomgrid th.rh{background:var(--panel);color:#fff;text-align:left;width:118px;font-size:11px;font-family:var(--disp);letter-spacing:0;text-transform:none}
+.th-o{background:#7c8aa3}.th-f{background:var(--teal)}.th-a{background:var(--amber)}.th-b{background:var(--green)}
+.etomgrid td{vertical-align:top;border-radius:8px;padding:6px;background:var(--ink2);border:1px solid var(--line)}
+.chip{display:block;font-size:11px;line-height:1.32;padding:5px 8px;margin:4px 0;border-radius:6px;background:var(--panel);border-left:3px solid var(--teal);color:var(--txt)}
+.chip:first-child{margin-top:0}.chip:last-child{margin-bottom:0}
+.chip.o{border-left-color:#7c8aa3}.chip.f{border-left-color:var(--teal)}.chip.a{border-left-color:var(--amber)}.chip.b{border-left-color:var(--green)}
+.chip.hl{box-shadow:0 0 0 1px var(--teal);background:rgba(55,224,200,.12)}
+.flowtag{font-family:var(--mono);font-size:11px;color:var(--teal);margin:14px 0 4px;letter-spacing:.5px}
+</style>
+</head>
+<body data-aud="eli5">
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="brand"><span class="dot"></span><b>TELECOM</b> ATLAS</div>
+    <div class="aud" role="tablist" aria-label="Reading level">
+      <button id="b-eli5" class="act" onclick="setAud('eli5')">◐ Explorer</button>
+      <button id="b-pro" onclick="setAud('pro')">◑ Architect</button>
+    </div>
+    <nav class="secnav" id="secnav">
+      <a href="#map">Map</a>
+      <a href="#players">Players</a>
+      <a href="#network">Network</a>
+      <a href="#bss">BSS</a>
+      <a href="#oss">OSS</a>
+      <a href="#frameworks">Frameworks</a>
+      <a href="#problems">Problems</a>
+      <a href="#future">Future</a>
+      <a href="#build">Build a Telco</a>
+      <a href="#deepdives" style="color:var(--amber)">⌗ Deep Dives</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ========== HERO ========== -->
+<section class="hero" id="top">
+  <div class="kicker">A field guide to the business of connectivity</div>
+  <h1>How a <span class="g">telecom</span> company<br>actually works.</h1>
+  <p class="lead">From the SIM in your pocket to the subsea cable under the ocean — and the software empire (BSS &amp; OSS) that turns signals into money. Built to zoom out to a single map, or zoom in until you could run the place.</p>
+  <div class="hero-meta">
+    <span>READING&nbsp;MODE&nbsp;→ <b>toggle Explorer / Architect</b> in the top bar</span>
+    <span>FRAMEWORKS&nbsp;→ <b>eTOM · SID · ODA · Open APIs</b></span>
+    <span>LENS&nbsp;→ <b>global + 🇮🇳 India callouts</b></span>
+  </div>
+  <div class="stat">
+    <div class="s"><div class="n">~$1.5T</div><div class="l">Global telecom service revenue / year</div></div>
+    <div class="s"><div class="n">3</div><div class="l">Layers that run it: BSS · OSS · Network</div></div>
+    <div class="s"><div class="n">100+</div><div class="l">TM Forum Open APIs replacing custom integrations</div></div>
+    <div class="s"><div class="n">1.2B+</div><div class="l">Subscribers in India alone (world's #2 market)</div></div>
+  </div>
+</section>
+
+<!-- ========== THE MAP ========== -->
+<section id="map">
+  <div class="kicker">01 — The whole thing on one screen</div>
+  <h2>The five layers of a telco</h2>
+  <p class="lead">Every telecom operator — whether it's a giant like Airtel or a tiny MVNO reselling SIMs — is built from the same five stacked layers. Money and intent flow <em>down</em>; service and data flow <em>up</em>. Tap any layer to jump straight to it.</p>
+
+  <div class="diagram" style="margin-top:24px">
+    <div class="dcap">The operator stack — click a layer to zoom in</div>
+    <div class="stack">
+      <a href="#players" class="layer l-cust">
+        <span class="lnum">L1</span><span class="ltitle">Customers &amp; Market</span>
+        <span class="ldesc">Retail consumers · SMBs &amp; call-centres · enterprises buying data lines. Who you sell to defines everything above.</span>
+        <span class="larrow">→</span>
+      </a>
+      <a href="#bss" class="layer l-bss">
+        <span class="lnum">L2</span><span class="ltitle">BSS</span>
+        <span class="ldesc"><b>Business Support Systems.</b> The commercial brain — catalog, CRM, ordering, rating, charging, billing, revenue &amp; partner settlement. Where connectivity becomes money.</span>
+        <span class="larrow">→</span>
+      </a>
+      <a href="#oss" class="layer l-oss">
+        <span class="lnum">L3</span><span class="ltitle">OSS</span>
+        <span class="ldesc"><b>Operations Support Systems.</b> The technical nervous system — inventory, provisioning/activation, fault &amp; performance assurance. Turns an order into a working service.</span>
+        <span class="larrow">→</span>
+      </a>
+      <a href="#network" class="layer l-net">
+        <span class="lnum">L4</span><span class="ltitle">Network &amp; Tech</span>
+        <span class="ldesc">RAN (cell towers) · core · transport · subsea cables · the journey PSTN → 2G → 5G → 6G. The physics that actually moves the bits.</span>
+        <span class="larrow">→</span>
+      </a>
+      <a href="#problems" class="layer l-sup">
+        <span class="lnum">L5</span><span class="ltitle">Supply Chain &amp; Forces</span>
+        <span class="ldesc">Equipment vendors (Ericsson, Nokia, Samsung, Huawei) · spectrum · regulators · geopolitics · the economics squeezing the whole industry.</span>
+        <span class="larrow">→</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="eli5">
+    <span class="modeflag">Explorer · the simple version</span>
+    <p>Imagine a telco as a restaurant. The <strong>Network</strong> is the kitchen and ovens — it cooks the actual food (the phone calls, the data). <strong>OSS</strong> is the kitchen manager making sure every station works and the dish gets made correctly. <strong>BSS</strong> is the front-of-house: the menu, taking your order, the bill, the loyalty card. <strong>Customers</strong> are the diners. And the <strong>Supply Chain</strong> is everyone who sells the restaurant its ovens, ingredients and the licence to operate. A telco lives or dies on how smoothly these five hand off to each other.</p>
+  </div>
+  <div class="pro">
+    <span class="modeflag">Architect · the precise version</span>
+    <p>The canonical split is <strong>BSS (the commercial domain)</strong> and <strong>OSS (the operational/technical domain)</strong>, both sitting on top of the network. The clean mental model: a customer's <em>intent</em> enters at BSS (a product order), is decomposed into <em>service</em> and <em>resource</em> orders by OSS, and is realised as configuration on physical/virtual network functions. Usage then flows back <em>up</em> — events are mediated, rated, charged and billed. TM Forum's <strong>eTOM</strong> formalises this as three vertical end-to-end flows you'll meet everywhere: <em>Fulfillment, Assurance, Billing</em> (the "FAB" columns). Master FAB and you can place almost any telco capability on the map.</p>
+  </div>
+
+  <div class="keypt"><p><b>The one sentence to remember:</b> BSS is <em>"how the telco makes money"</em>; OSS is <em>"how the telco keeps the lights on"</em>; the network is <em>"what they're actually selling."</em> Everything else is detail.</p></div>
+</section>
+
+<!-- ========== PLAYERS ========== -->
+<section id="players">
+  <div class="kicker">02 — Who's in the room</div>
+  <h2>The players &amp; the value chain</h2>
+  <p class="lead">"A telco" is not one kind of company. There's a whole ecosystem of operators, resellers and middlemen — and knowing who is who is half of sounding like an insider.</p>
+
+  <h3>Who you sell to: the three customer segments</h3>
+  <div class="grid g3" style="margin-bottom:8px">
+    <div class="card"><div class="ico">◉</div><div class="tag">Retail / Consumer</div><h4>B2C</h4><p>Individual mobile, SIM, data and broadband users. Huge volume, low margin, brutal churn. Mostly prepaid in India; postpaid-heavy in the US/EU.</p></div>
+    <div class="card amber"><div class="ico">◫</div><div class="tag">SMB</div><h4>Small &amp; Medium Business</h4><p>Group SIM fleets, call-centre lines, IoT SIMs (trackers, POS, meters). Higher value per account, lighter touch than enterprise.</p></div>
+    <div class="card violet"><div class="ico">▤</div><div class="tag">Enterprise / Wholesale</div><h4>B2B &amp; B2B2X</h4><p>Leased data lines, MPLS/SD-WAN, private 5G, dedicated SLAs. Lower volume, premium margin, contract-driven, integration-heavy.</p></div>
+  </div>
+
+  <h3>The operator alphabet soup</h3>
+  <p>The single most useful "insider" vocabulary. These describe <em>who owns what</em> in the chain from spectrum to subscriber.</p>
+  <table class="tbl">
+    <tr><th>Acronym</th><th>Who they are</th><th>Owns spectrum?</th><th>Owns network?</th></tr>
+    <tr><td><b>MNO</b><br>Mobile Network Operator</td><td>The "real" carrier — Jio, Airtel, Verizon, Vodafone. Holds the licence, builds towers, runs the core.</td><td>✅ Yes</td><td>✅ Yes</td></tr>
+    <tr><td><b>MVNO</b><br>Mobile Virtual Network Operator</td><td>A brand that <em>rents</em> network capacity from an MNO and sells its own plans (e.g. Lyca, many niche/ethnic/gaming brands).</td><td>❌ No</td><td>❌ No (leases it)</td></tr>
+    <tr><td><b>MVNE / MVNA</b><br>Enabler / Aggregator</td><td>The "MVNO-in-a-box" platform &amp; wholesale broker that lets a brand launch fast without building BSS/OSS from scratch.</td><td>❌ No</td><td>❌ No (provides systems)</td></tr>
+    <tr><td><b>IPX provider</b><br>IP eXchange</td><td>Neutral interconnect backbone (e.g. carriers' carriers) that lets operators exchange voice, messaging &amp; data — the plumbing of <b>international roaming</b>.</td><td>❌ No</td><td>✅ Backbone only</td></tr>
+    <tr><td><b>Wholesale carrier</b></td><td>Sells bulk capacity / transit / subsea bandwidth to other operators (e.g. Tata Communications, Lumen).</td><td>Sometimes</td><td>✅ Long-haul</td></tr>
+  </table>
+
+  <details class="zoom">
+    <summary><span class="zi">+</span> How international roaming actually works <span class="zlabel">zoom in</span></summary>
+    <div class="zoom-body">
+      <p class="pro">When your SIM lands in another country, your home operator (the <em>HPMN</em> — Home Public Mobile Network) has no kit there. Your phone attaches to a <em>VPMN</em> (Visited PMN). The two need to (a) verify you're a real, paying subscriber and (b) agree who pays whom. That trust + billing relationship runs over the <strong>IPX backbone</strong> using signalling (legacy SS7/Diameter, now increasingly 5G's HTTP/2-based interfaces). Usage records (<code>TAP/RAP</code> files) are exchanged and reconciled between operators — this is <strong>inter-operator settlement</strong>, a whole BSS discipline of its own.</p>
+      <p class="eli5">Your phone is like a member of a gym chain. When you travel, you walk into a <em>different</em> gym (a local network). That gym lets you in, but later sends a bill to your home gym for the time you used. The "billing club" that lets all these gyms trust each other and settle up is the roaming/IPX system.</p>
+      <div class="india"><span class="tag">🇮🇳 India angle</span><p>India is a massive <em>inbound &amp; outbound</em> roaming market and a hub for IPX/wholesale via players like <b>Tata Communications</b> — which also owns a large slice of the world's subsea cable capacity.</p></div>
+    </div>
+  </details>
+
+  <div class="keypt"><p><b>Why this matters for building a telco:</b> you don't have to be an MNO to start. Many modern "telcos" launch as an <em>MVNO on an MVNE platform</em> — renting network and software so they can focus on brand, segment and customer experience. That choice cascades into every layer above.</p></div>
+</section>
+
+<!-- ========== NETWORK ========== -->
+<section id="network">
+  <div class="kicker">03 — What you're actually selling</div>
+  <h2>The network, briefly</h2>
+  <p class="lead">You don't need to be an RF engineer, but you can't talk BSS/OSS credibly without a working map of the network underneath. Here's the survival kit.</p>
+
+  <h3>From your antenna to the other side of the world</h3>
+  <div class="diagram">
+    <div class="dcap">The end-to-end path of a connection</div>
+    <svg viewBox="0 0 920 200" role="img" aria-label="Network path diagram">
+      <defs><marker id="arr" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#37e0c8"/></marker></defs>
+      <g font-size="11" fill="#dfe7f2" text-anchor="middle">
+        <rect x="8" y="70" width="120" height="60" rx="9" fill="#16202f" stroke="#5fd17a"/>
+        <text x="68" y="95" fill="#5fd17a" font-weight="600">DEVICE</text><text x="68" y="113" fill="#93a2ba">phone · IoT · CPE</text>
+        <rect x="168" y="70" width="120" height="60" rx="9" fill="#16202f" stroke="#ffb24d"/>
+        <text x="228" y="95" fill="#ffb24d" font-weight="600">RAN</text><text x="228" y="113" fill="#93a2ba">cell tower / radio</text>
+        <rect x="328" y="70" width="120" height="60" rx="9" fill="#16202f" stroke="#ffb24d"/>
+        <text x="388" y="95" fill="#ffb24d" font-weight="600">TRANSPORT</text><text x="388" y="113" fill="#93a2ba">backhaul · MPLS</text>
+        <rect x="488" y="70" width="120" height="60" rx="9" fill="#16202f" stroke="#37e0c8"/>
+        <text x="548" y="95" fill="#37e0c8" font-weight="600">CORE</text><text x="548" y="113" fill="#93a2ba">routing · auth · policy</text>
+        <rect x="648" y="70" width="130" height="60" rx="9" fill="#16202f" stroke="#9b8cff"/>
+        <text x="713" y="95" fill="#9b8cff" font-weight="600">INTERNET /</text><text x="713" y="111" fill="#9b8cff">SUBSEA</text>
+        <rect x="800" y="70" width="112" height="60" rx="9" fill="#16202f" stroke="#5fd17a"/>
+        <text x="856" y="95" fill="#5fd17a" font-weight="600">FAR END</text><text x="856" y="113" fill="#93a2ba">other network</text>
+        <g stroke="#37e0c8" stroke-width="1.5" marker-end="url(#arr)">
+          <line x1="130" y1="100" x2="164" y2="100"/><line x1="290" y1="100" x2="324" y2="100"/>
+          <line x1="450" y1="100" x2="484" y2="100"/><line x1="610" y1="100" x2="644" y2="100"/>
+          <line x1="780" y1="100" x2="796" y2="100"/>
+        </g>
+        <text x="460" y="30" fill="#37e0c8" font-size="12" font-weight="600">OSS provisions &amp; assures every box on this line</text>
+        <text x="460" y="172" fill="#637191" font-size="10.5">Samsung · Nokia · Ericsson · Huawei build the RAN &amp; core kit · Tata/Google/Meta own subsea cable</text>
+      </g>
+    </svg>
+  </div>
+
+  <details class="zoom">
+    <summary><span class="zi">+</span> The generations: PSTN → 2G → 5G → 6G <span class="zlabel">zoom in</span></summary>
+    <div class="zoom-body">
+      <table class="tbl">
+        <tr><th>Era</th><th>What it gave us</th><th>BSS/OSS impact</th></tr>
+        <tr><td><b>PSTN</b></td><td>Circuit-switched voice. One call = one dedicated line.</td><td>Simple per-minute billing.</td></tr>
+        <tr><td><b>2G</b></td><td>Digital voice + <b>SMS</b>. The SIM card is born.</td><td>Prepaid revolution; real-time balance.</td></tr>
+        <tr><td><b>3G</b></td><td>Mobile data, the mobile web.</td><td>Data rating, bundles, fair-use.</td></tr>
+        <tr><td><b>4G / LTE</b></td><td>All-IP, fast broadband, video.</td><td>Convergent charging; unlimited plans.</td></tr>
+        <tr><td><b>5G</b></td><td><b>Network slicing</b>, ultra-low latency, massive IoT, private networks.</td><td>Charging per-slice, per-SLA, B2B2X; this is what modern BSS is being rebuilt for.</td></tr>
+        <tr><td><b>6G</b> (~2030)</td><td>AI-native, sensing + comms, terabit speeds. Still research.</td><td>Real-time, intent-based, API-monetised everything.</td></tr>
+      </table>
+      <p class="eli5">Each "G" is just a bigger, faster pipe with new tricks. 2G could carry your voice and a text. 5G can carry a self-driving car's reflexes <em>and</em> a million smart meters <em>and</em> your 4K movie — all on the same tower, sliced into separate virtual lanes.</p>
+    </div>
+  </details>
+
+  <details class="zoom">
+    <summary><span class="zi">+</span> RAN, Core, Transport &amp; the vendor map <span class="zlabel">zoom in</span></summary>
+    <div class="zoom-body">
+      <ul class="ds">
+        <li><b>RAN (Radio Access Network):</b> the antennas + radios on towers that talk to your phone. The single most expensive, vendor-locked part of the network. Dominated by <em>Ericsson, Nokia, Huawei, Samsung</em>.</li>
+        <li><b>Core network:</b> the "brain" — authenticates the SIM, applies policy, routes traffic, and (crucially) generates the <em>usage events</em> that BSS turns into money.</li>
+        <li><b>Transport / backhaul:</b> fibre, microwave and MPLS links carrying traffic from tower to core.</li>
+        <li><b>Subsea & long-haul:</b> the cables connecting continents — owned by carriers (Tata) and increasingly hyperscalers (Google, Meta).</li>
+        <li><b>Open RAN:</b> the industry's attempt to <em>break vendor lock-in</em> by standardising interfaces so you can mix-and-match radios and software. Promising, politically loved, but adoption is slower and messier than hoped — see <a href="#problems" class="inl">Problems</a>.</li>
+      </ul>
+    </div>
+  </details>
+
+  <div class="india"><span class="tag">🇮🇳 India angle</span><p>India ran one of the world's largest <b>nationwide 5G Standalone (SA)</b> rollouts — Jio and Airtel moved fast. Spectrum was auctioned in 2022 &amp; 2024 across sub-1GHz to mmWave. India also pushes <b>indigenous telecom gear</b> (e.g. domestic 4G/5G stacks) as a supply-chain &amp; sovereignty play.</p></div>
+</section>
+
+<!-- ========== BSS ========== -->
+<section id="bss">
+  <div class="kicker">04 — The commercial brain · the deep dive</div>
+  <h2>BSS — where signals<br>become money</h2>
+  <p class="lead">This is the layer you most want command over. BSS is the suite of systems that runs the <em>commercial</em> life of the telco: define a product, sell it, take the order, measure usage, price it, bill it, collect the cash, settle with partners, and keep the customer. Here's the full machine, component by component.</p>
+
+  <div class="eli5">
+    <span class="modeflag">Explorer · the simple version</span>
+    <p>BSS is the shop counter, the cash register, the menu, the receipt and the loyalty programme — all in software. When you buy a plan, top up, get a bill, complain, or switch deals, you're touching BSS. It never touches a single radio wave; its whole job is turning <em>"a customer used the network"</em> into <em>"the customer pays the right amount, on time, and stays happy."</em></p>
+  </div>
+  <div class="pro">
+    <span class="modeflag">Architect · the precise version</span>
+    <p>BSS is the realisation of eTOM's <em>customer-facing</em> processes — primarily the <strong>Fulfillment</strong> and <strong>Billing</strong> columns plus the customer side of Assurance. Historically delivered as monolithic, deeply customised suites (Amdocs, Ericsson, Netcracker, CSG, Oracle BRM). The modern direction is <em>modular, cloud-native, API-first</em> components wired by TM Forum <strong>Open APIs</strong> over a shared data model (<strong>SID</strong>) — see <a href="#frameworks" class="inl">Frameworks</a>. The strategic battleground today is the <strong>convergent charging system</strong> and a single, real-time <strong>product catalog</strong> driving everything downstream.</p>
+  </div>
+
+  <h3>The BSS order-to-cash flow</h3>
+  <div class="diagram">
+    <div class="dcap">A product order's journey through BSS (and the handoff to OSS)</div>
+    <svg viewBox="0 0 920 250" role="img" aria-label="BSS order to cash flow">
+      <defs><marker id="a2" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#37e0c8"/></marker></defs>
+      <g font-size="10.5" text-anchor="middle">
+        <rect x="10" y="20" width="135" height="52" rx="9" fill="#16202f" stroke="#37e0c8"/><text x="77" y="42" fill="#fff" font-weight="600">PRODUCT</text><text x="77" y="58" fill="#93a2ba">CATALOG</text>
+        <rect x="175" y="20" width="135" height="52" rx="9" fill="#16202f" stroke="#37e0c8"/><text x="242" y="42" fill="#fff" font-weight="600">CRM</text><text x="242" y="58" fill="#93a2ba">customer &amp; sales</text>
+        <rect x="340" y="20" width="135" height="52" rx="9" fill="#16202f" stroke="#37e0c8"/><text x="407" y="42" fill="#fff" font-weight="600">ORDER</text><text x="407" y="58" fill="#93a2ba">MANAGEMENT</text>
+        <rect x="505" y="20" width="180" height="52" rx="9" fill="#0c121d" stroke="#9b8cff" stroke-dasharray="4 3"/><text x="595" y="42" fill="#9b8cff" font-weight="600">↓ OSS PROVISIONS</text><text x="595" y="58" fill="#93a2ba">service activated on network</text>
+        <rect x="10" y="150" width="135" height="52" rx="9" fill="#16202f" stroke="#ffb24d"/><text x="77" y="172" fill="#fff" font-weight="600">MEDIATION</text><text x="77" y="188" fill="#93a2ba">collect usage</text>
+        <rect x="175" y="150" width="135" height="52" rx="9" fill="#16202f" stroke="#ffb24d"/><text x="242" y="172" fill="#fff" font-weight="600">RATING &amp;</text><text x="242" y="188" fill="#93a2ba">CHARGING</text>
+        <rect x="340" y="150" width="135" height="52" rx="9" fill="#16202f" stroke="#ffb24d"/><text x="407" y="172" fill="#fff" font-weight="600">BILLING &amp;</text><text x="407" y="188" fill="#93a2ba">INVOICING</text>
+        <rect x="505" y="150" width="135" height="52" rx="9" fill="#16202f" stroke="#5fd17a"/><text x="572" y="172" fill="#fff" font-weight="600">PAYMENTS &amp;</text><text x="572" y="188" fill="#93a2ba">COLLECTIONS</text>
+        <rect x="670" y="150" width="140" height="52" rx="9" fill="#16202f" stroke="#ff6b6b"/><text x="740" y="172" fill="#fff" font-weight="600">REVENUE MGMT</text><text x="740" y="188" fill="#93a2ba">assurance · settlement</text>
+        <g stroke="#37e0c8" stroke-width="1.4" marker-end="url(#a2)">
+          <line x1="145" y1="46" x2="171" y2="46"/><line x1="310" y1="46" x2="336" y2="46"/><line x1="475" y1="46" x2="501" y2="46"/>
+          <line x1="145" y1="176" x2="171" y2="176"/><line x1="310" y1="176" x2="336" y2="176"/><line x1="475" y1="176" x2="501" y2="176"/><line x1="640" y1="176" x2="666" y2="176"/>
+        </g>
+        <line x1="595" y1="72" x2="595" y2="120" stroke="#9b8cff" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#a2)"/>
+        <text x="595" y="100" fill="#9b8cff" font-size="9.5">usage starts flowing back ↓</text>
+        <text x="77" y="232" fill="#637191" font-size="9.5">▲ top row = SELL &amp; ACTIVATE   ▼ bottom row = MEASURE, CHARGE &amp; COLLECT</text>
+      </g>
+    </svg>
+  </div>
+
+  <h3>The BSS components, one by one</h3>
+  <p>Tap each to zoom in. In a monolith these blur together; in a modern modular BSS each is a separately deployable component with its own Open APIs.</p>
+
+  <details class="zoom">
+    <summary><span class="zi">+</span> 1 · Product Catalog &amp; Offer Management <span class="zlabel">the master source of truth</span></summary>
+    <div class="zoom-body">
+      <p class="pro">The catalog defines <em>everything that can be sold</em>: products, offers, bundles, pricing, eligibility rules, discounts and their relationships. Modern best practice is a <strong>single, centralized, model-driven catalog</strong> that drives CRM, ordering, charging and billing — so launching a new plan is a configuration change, not a 6-month IT project. This is the #1 lever for <em>time-to-market</em>, which is the metric CFOs care about.</p>
+      <p class="eli5">It's the menu. If the menu is one clean, shared document, every waiter quotes the same price and a new dish appears everywhere instantly. If every waiter keeps their <em>own</em> copy of the menu (the old monolith problem), chaos and wrong bills follow.</p>
+      <ul class="ds">
+        <li><b>Why it's strategic:</b> a good catalog = launch a 5G IoT bundle in days; a bad one = months of custom code.</li>
+        <li><b>TM Forum link:</b> Product Catalog APIs (TMF620), and the SID's Product/Service/Resource model.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="zoom">
+    <summary><span class="zi">+</span> 2 · CRM &amp; Customer Management <span class="zlabel">the relationship</span></summary>
+    <div class="zoom-body">
+      <p class="pro">Captures the <em>party</em> (person/organisation), identity &amp; KYC, the account hierarchy (vital for SMB/enterprise multi-line), interactions across all channels (app, store, IVR, web), cases/tickets and the 360° view. Feeds <strong>churn</strong> models and personalization. In ODA this maps to <em>Party Management</em> + <em>Engagement Management</em>.</p>
+      <p class="eli5">It's the little black book of who your customers are, what they've bought, every time they called, and how happy they are — so you can keep them.</p>
+      <div class="india"><span class="tag">🇮🇳 India angle</span><p>KYC is heavy and regulated — Aadhaar-based eKYC dramatically sped up SIM activation, but identity/verification rules (and re-verification mandates) are a real compliance load on CRM/onboarding.</p></div>
+    </div>
+  </details>
+
+  <details class="zoom">
+    <summary><span class="zi">+</span> 3 · Order Management (the orchestrator) <span class="zlabel">turns a sale into action</span></summary>
+    <div class="zoom-body">
+      <p class="pro">Takes a <em>commercial order</em> from CRM and orchestrates it into a sequence of <em>service</em> and <em>resource</em> orders, coordinating BSS↔OSS. It manages decomposition, dependency sequencing, rollback on failure, and order state across long-running fulfilment. This is the classic <strong>BSS/OSS boundary</strong> — and where most integration pain lives. Open API: TMF622 (Product Ordering) handing to TMF641 (Service Ordering).</p>
+      <p class="eli5">It's the manager who hears "one large pizza, half pepperoni" and turns it into precise instructions for the dough station, the oven and the delivery driver — and notices if any step fails.</p>
+    </div>
+  </details>
+
+  <details class="zoom">
+    <summary><span class="zi">+</span> 4 · Mediation <span class="zlabel">the usage funnel</span></summary>
+    <div class="zoom-body">
+      <p class="pro">The network spews enormous volumes of raw usage events — <strong>CDRs</strong> (Call Detail Records) and their data/IP equivalents — in many proprietary formats. Mediation <em>collects, normalizes, de-duplicates, correlates and enriches</em> these into clean records the charging/billing engines can use. It's unglamorous and absolutely critical: garbage in, wrong bills out, revenue leaked.</p>
+      <p class="eli5">Imagine every machine in a factory shouting its activity in a different language. Mediation is the translator that turns all that noise into one tidy logbook everyone can read.</p>
+    </div>
+  </details>
+
+  <details class="zoom">
+    <summary><span class="zi">+</span> 5 · Rating &amp; Charging — online vs offline (the crown jewel) <span class="zlabel">most strategic</span></summary>
+    <div class="zoom-body">
+      <p class="pro"><strong>Rating</strong> applies price to usage (and to events). <strong>Charging</strong> decides <em>when</em> and <em>against what balance</em>:</p>
+      <ul class="ds">
+        <li><b>Offline charging:</b> usage is rated and billed <em>after the fact</em> — the classic <strong>postpaid</strong> model. Records flow via mediation to billing at cycle end.</li>
+        <li><b>Online charging (OCS — Online Charging System):</b> <em>real-time</em> balance checks <em>before/while</em> the service is used — the <strong>prepaid</strong> model. The OCS authorizes, reserves and debits credit live, so a phone cuts off when the balance hits zero.</li>
+        <li><b>Convergent charging:</b> one engine handling prepaid + postpaid + any service (voice, data, IoT, content) against shared balances. This is the modern target architecture — and the part vendors compete hardest on for 5G.</li>
+      </ul>
+      <p class="eli5">Postpaid is a bar tab — drink now, settle later. Prepaid is a pay-as-you-go arcade card — the machine checks your credit <em>before</em> each game and stops you the instant it runs out. The "online charging system" is the lightning-fast cashier doing that check in real time, millions of times a second.</p>
+      <div class="keypt"><p>Why this is the crown jewel: in prepaid-heavy markets (India, much of Africa/Asia/LatAm) the OCS is the beating heart of the business — it must be real-time, never wrong, and never down. 5G slicing &amp; B2B2X make charging models exponentially more complex, which is exactly why charging dominates modern BSS roadmaps.</p></div>
+      <button class="diveBtn ghost" onclick="openDive('dive-charging')">⌗ Enter the Charging &amp; OCS deep dive →</button>
+    </div>
+  </details>
+
+  <details class="zoom">
+    <summary><span class="zi">+</span> 6 · Billing &amp; Invoicing <span class="zlabel">producing the bill</span></summary>
+    <div class="zoom-body">
+      <p class="pro">Aggregates rated usage + recurring charges + one-offs + discounts + taxes into an invoice per billing cycle, across complex account hierarchies (think an enterprise with 10,000 lines and a custom discount). Handles bill runs, adjustments, disputes, dunning and credit notes. Distinct from charging: charging knows "this call cost ₹2"; billing assembles the monthly statement and chases payment.</p>
+      <p class="eli5">It's the part that gathers everything you did this month, adds it up, applies your discounts and taxes, and produces the actual bill you receive.</p>
+    </div>
+  </details>
+
+  <details class="zoom">
+    <summary><span class="zi">+</span> 7 · Revenue Management — assurance, settlement &amp; fraud <span class="zlabel">protect the cash</span></summary>
+    <div class="zoom-body">
+      <ul class="ds">
+        <li><b>Revenue Assurance (RA):</b> detect &amp; plug <em>revenue leakage</em> — usage that happened but never got billed (mis-rated, dropped records, config errors). Operators routinely leak 1–5%+ of revenue here; RA is pure margin recovery.</li>
+        <li><b>Partner / interconnect settlement:</b> reconcile who-owes-whom with other carriers, roaming partners, content providers and the whole B2B2X ecosystem. Increasingly the <em>biggest</em> growth area as telcos become platforms.</li>
+        <li><b>Fraud Management:</b> SIM-box fraud, subscription fraud, roaming fraud, Wangiri scams. Real-time detection sits alongside charging.</li>
+      </ul>
+      <p class="eli5">This is the loss-prevention team: making sure money the telco earned doesn't quietly slip through cracks, that partners pay their share, and that crooks don't ride for free.</p>
+    </div>
+  </details>
+
+  <div class="warn"><p><b>The monolith problem (your starting premise, made precise):</b> classic BSS suites (Amdocs &amp; co.) bundled all seven blocks into one deeply-customized, tightly-coupled platform. Powerful, but slow to change, expensive to upgrade, and a barrier to launching anything new fast. That pain is <em>the</em> reason the whole industry is moving to modular, API-driven BSS — which is what the <a href="#frameworks" class="inl">TM Forum frameworks</a> exist to enable.</p></div>
+  <button class="diveBtn ghost" onclick="openDive('dive-vendors')">⌗ Enter the Vendor Landscape deep dive →</button>
+</section>
+
+<!-- ========== OSS ========== -->
+<section id="oss">
+  <div class="kicker">05 — The technical nervous system</div>
+  <h2>OSS — keeping the lights on</h2>
+  <p class="lead">If BSS is the shop, OSS is the engine room. It's how an order becomes a live service, how the network is tracked, and how problems get caught before customers scream. You asked for the basics — here's a clean, sufficient model.</p>
+
+  <div class="eli5"><span class="modeflag">Explorer · the simple version</span><p>OSS is the building's facilities &amp; maintenance crew. It knows where every cable and box is (inventory), switches your new service on (provisioning), and watches for anything breaking 24/7 (assurance) — fixing many faults before you even notice.</p></div>
+
+  <h3>The three jobs of OSS — and the FAB columns</h3>
+  <div class="grid g3">
+    <div class="card violet"><div class="tag">Fulfillment</div><h4>Make it work</h4><p>Provisioning &amp; activation: configure the network so the service the customer ordered actually exists and is live. Includes resource &amp; service inventory.</p></div>
+    <div class="card violet"><div class="tag">Assurance</div><h4>Keep it working</h4><p>Fault management (detect/diagnose/fix outages) + performance management (monitor quality, SLAs, capacity). The 24/7 watchtower.</p></div>
+    <div class="card violet"><div class="tag">Inventory</div><h4>Know what you have</h4><p>The single source of truth for physical &amp; logical network resources — towers, ports, IP addresses, fibre, spectrum, VNFs. Everything else depends on it.</p></div>
+  </div>
+
+  <div class="keypt"><p><b>The framework hook:</b> eTOM organizes <em>both</em> BSS and OSS work into three end-to-end vertical flows — <strong>Fulfillment, Assurance, Billing (FAB)</strong>. BSS owns the customer-facing slice of each; OSS owns the network-facing slice. Knowing which side of FAB you're on instantly tells you whether a capability is "BSS" or "OSS."</p></div>
+
+  <details class="zoom">
+    <summary><span class="zi">+</span> The BSS ↔ OSS handoff, precisely <span class="zlabel">zoom in</span></summary>
+    <div class="zoom-body">
+      <p class="pro">A <em>product order</em> (BSS) is decomposed into a <em>service order</em> (OSS service layer) and then <em>resource orders</em> (OSS resource layer), which become device/VNF configuration. This is the SID's <strong>Product → Service → Resource</strong> abstraction made operational. The trend (ODA's "decoupling") is to deliberately <em>break</em> the tight coupling between the commercial offer and the network realization, so product innovation and network operations can move at different speeds. <em>Network-as-a-Service</em> is the poster child.</p>
+      <p class="eli5">BSS says "the customer wants Plan X." OSS translates that into "switch on these specific cables and boxes." Keeping those two languages loosely connected means the marketing team can invent new plans without waiting for the network team to rewire anything.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ========== FRAMEWORKS ========== -->
+<section id="frameworks">
+  <div class="kicker">06 — The blueprints everyone agrees on</div>
+  <h2>The TM Forum frameworks &amp; ODA</h2>
+  <p class="lead">This is the part that turns "I know telecom" into "I can architect a telecom." <strong>TM Forum</strong> is the industry body whose frameworks give every operator and vendor a <em>common language</em> — so systems, partners and people interoperate instead of reinventing the wheel. Learn these four and the modern architecture (ODA) and you genuinely have the toolkit to design a telco.</p>
+
+  <h3>The four classic frameworks (the "what")</h3>
+  <table class="tbl">
+    <tr><th>Framework</th><th>Answers the question</th><th>Think of it as</th></tr>
+    <tr><td><b>eTOM</b><br>Business Process Framework</td><td><em>What processes</em> does a telco run?</td><td>The verbs — every activity, organized.</td></tr>
+    <tr><td><b>SID</b><br>Information Framework</td><td><em>What data/things</em> are we talking about?</td><td>The nouns — a shared data model.</td></tr>
+    <tr><td><b>Functional Framework</b><br>(evolution of TAM/Application Framework)</td><td><em>What software functions</em> deliver it?</td><td>The tools — application building blocks.</td></tr>
+    <tr><td><b>Open APIs</b></td><td><em>How do systems talk</em> to each other?</td><td>The connectors — 100+ standard REST APIs.</td></tr>
+  </table>
+
+  <details class="zoom" open>
+    <summary><span class="zi">+</span> eTOM, decoded — the map you must internalize <span class="zlabel">the big one</span></summary>
+    <div class="zoom-body">
+      <p class="pro"><strong>eTOM (enhanced Telecom Operations Map)</strong> is a hierarchical catalogue of <em>every business process</em> a service provider runs, decomposed from a few high-level areas down into granular tasks (current release <em>v25.0, Nov 2025</em>). It is a <em>reference</em> framework — descriptive, not prescriptive: it tells you <em>what</em> exists and how it relates, not a mandated sequence. You use it to scope projects, find gaps/duplication, compare As-Is vs To-Be, and speak a common language with vendors.</p>
+      <p class="eli5">eTOM is a giant, agreed-upon list of <em>everything a phone company does</em> — sorted into neat drawers — so that when two companies (or a company and a software vendor) talk, they mean the same thing by "billing" or "assurance."</p>
+      <div class="diagram">
+        <div class="dcap">eTOM at a glance — 3 areas, and the famous FAB columns inside Operations</div>
+        <svg viewBox="0 0 880 340" role="img" aria-label="eTOM structure">
+          <g font-size="11" text-anchor="middle">
+            <rect x="20" y="14" width="840" height="40" rx="8" fill="#0c121d" stroke="#9b8cff"/>
+            <text x="440" y="32" fill="#9b8cff" font-weight="600">STRATEGY, INFRASTRUCTURE &amp; PRODUCT (SIP)</text>
+            <text x="440" y="46" fill="#637191" font-size="9.5">planning &amp; building capability — strategy · infra lifecycle · product lifecycle</text>
+
+            <rect x="20" y="66" width="840" height="170" rx="8" fill="#0c121d" stroke="#37e0c8"/>
+            <text x="440" y="86" fill="#37e0c8" font-weight="600">OPERATIONS — the day-to-day, organized as FAB</text>
+            <rect x="40" y="100" width="120" height="120" rx="7" fill="#16202f" stroke="#637191"/><text x="100" y="160" fill="#93a2ba">Operations<tspan x="100" dy="14">Support &amp;</tspan><tspan x="100" dy="14">Readiness</tspan></text>
+            <rect x="180" y="100" width="200" height="120" rx="7" fill="#16202f" stroke="#37e0c8"/><text x="280" y="155" fill="#37e0c8" font-weight="600">FULFILLMENT</text><text x="280" y="172" fill="#93a2ba" font-size="9.5">order → live service</text>
+            <rect x="400" y="100" width="200" height="120" rx="7" fill="#16202f" stroke="#ffb24d"/><text x="500" y="155" fill="#ffb24d" font-weight="600">ASSURANCE</text><text x="500" y="172" fill="#93a2ba" font-size="9.5">keep it healthy</text>
+            <rect x="620" y="100" width="200" height="120" rx="7" fill="#16202f" stroke="#5fd17a"/><text x="720" y="155" fill="#5fd17a" font-weight="600">BILLING</text><text x="720" y="172" fill="#93a2ba" font-size="9.5">rate · charge · invoice</text>
+
+            <rect x="20" y="248" width="840" height="40" rx="8" fill="#0c121d" stroke="#ff6b6b"/>
+            <text x="440" y="266" fill="#ff6b6b" font-weight="600">ENTERPRISE MANAGEMENT</text>
+            <text x="440" y="280" fill="#637191" font-size="9.5">HR, finance, legal, strategy — running the company itself</text>
+
+            <text x="440" y="312" fill="#93a2ba" font-size="10">Each box decomposes downward into Level 1 → 2 → 3 → 4 processes</text>
+            <text x="440" y="328" fill="#637191" font-size="9.5">Rows (not shown) run from customer-facing at top → supplier-facing at bottom — covering the full value chain</text>
+          </g>
+        </svg>
+      </div>
+      <div class="keypt"><p><b>The mental shortcut:</b> three areas — <em>build it (SIP)</em>, <em>run it (Operations)</em>, <em>manage the company (Enterprise)</em>. Inside "run it," everything is Fulfillment, Assurance or Billing. That's 80% of the practical value of eTOM in two sentences.</p></div>
+      <button class="diveBtn ghost" onclick="openDive('dive-etom')">⌗ Enter the eTOM Level-2 deep dive →</button>
+    </div>
+  </details>
+
+  <details class="zoom">
+    <summary><span class="zi">+</span> SID, Functional Framework &amp; Open APIs <span class="zlabel">the other three</span></summary>
+    <div class="zoom-body">
+      <ul class="ds">
+        <li><b>SID (Information Framework):</b> the shared <em>data dictionary</em>. Its spine is the <strong>Product → Service → Resource</strong> hierarchy: what the customer buys (Product), the technical capability behind it (Service), and the physical/logical assets that deliver it (Resource). If everyone models data the SID way, systems integrate cleanly.</li>
+        <li><b>Functional Framework</b> (the evolution of the old <em>TAM / Application Framework</em>): defines the <em>functions</em> software must perform, shifting from "which applications do I own" to "which capabilities do I need" — the conceptual basis for ODA components.</li>
+        <li><b>Open APIs:</b> 100+ standardized REST APIs (TMF6xx series) that let modular components plug together regardless of vendor. They're the practical glue that makes "swap out one component" actually possible. The newer <strong>CAMARA / Open Gateway</strong> initiative extends this idea to expose <em>network capabilities</em> (quality-on-demand, location, SIM-swap fraud checks) to outside developers — a fresh revenue frontier.</li>
+      </ul>
+    </div>
+  </details>
+
+  <h3>ODA — where it's all heading (the "how")</h3>
+  <p>The four frameworks describe the pieces. <strong>Open Digital Architecture (ODA)</strong> is TM Forum's blueprint for assembling them into a <em>cloud-native, modular, plug-and-play</em> operator — the explicit antidote to the monolith.</p>
+
+  <div class="grid g2">
+    <div class="card">
+      <div class="tag">The idea</div><h4>Lego, not concrete</h4>
+      <p class="pro">Replace monolithic BSS/OSS with reusable, interoperable <strong>ODA Components</strong> — software building blocks that expose their function via Open APIs and run on a standard cloud-native substrate called the <strong>ODA Canvas</strong>. Assemble, disassemble and reassemble to meet needs. Vendors can now <em>certify</em> components against TM Forum's test kits.</p>
+      <p class="eli5">Instead of buying one giant frozen machine that's painful to change, you build your telco from standard Lego bricks that snap together — and you can swap any brick without rebuilding the whole thing.</p>
+    </div>
+    <div class="card violet">
+      <div class="tag">The structure</div><h4>Functional blocks</h4>
+      <p class="pro">ODA groups capability into functional blocks — e.g. <em>Engagement Management</em> (channels), <em>Party Management</em> (people/orgs), <em>Core Commerce Management</em> (catalog, order, billing), <em>Production</em> (service/resource lifecycle, supply chain, workforce), and a <em>Decoupling &amp; Integration</em> fabric plus an <em>Intelligence</em> layer for real-time, zero-touch decisions.</p>
+      <p class="eli5">ODA sorts all the Lego bricks into labelled bins: "talking to customers," "knowing who people are," "selling &amp; billing," "making the service happen," and "the smart glue connecting it all."</p>
+    </div>
+  </div>
+
+  <div class="keypt"><p><b>How they fit together (say this in an interview and you'll sound senior):</b> "eTOM gives me the <em>processes</em>, SID gives me the <em>data model</em>, the Functional Framework gives me the <em>capabilities</em>, Open APIs give me the <em>interfaces</em> — and ODA is the cloud-native architecture that assembles all four into composable components on a common canvas. It's how you migrate off the monolith without a big-bang rewrite."</p></div>
+</section>
+
+<!-- ========== PROBLEMS ========== -->
+<section id="problems">
+  <div class="kicker">07 — Why this is a hard business</div>
+  <h2>The forces squeezing telecom</h2>
+  <p class="lead">To have command, you must know what keeps telco executives awake. These pressures explain <em>every</em> strategic move the industry is making — and they're sharper than ever in 2026.</p>
+
+  <div class="grid g2">
+    <div class="card coral"><div class="tag">Economics</div><h4>The ARPU trap</h4><p>Data traffic explodes; revenue doesn't. Connectivity is commoditized, <strong>ARPU is flat or falling</strong> (often below inflation), and price wars in saturated markets drag everyone down. "More data for the same money" is the core squeeze.</p></div>
+    <div class="card coral"><div class="tag">Capital</div><h4>Capex vs. returns</h4><p>Operators sank fortunes into 5G &amp; fibre; <strong>returns lag badly</strong>. With buildouts maturing, capex is now <em>tapering</em> in most regions — the new game is squeezing efficiency &amp; monetization from what's already built, not building more.</p></div>
+    <div class="card coral"><div class="tag">5G monetization</div><h4>The "underwhelming chapter"</h4><p>5G's killer B2C app never quite arrived; consumers won't pay more for it. The money must come from <strong>enterprise, slicing, private networks &amp; APIs</strong> — but that needs different sales models and modern BSS, which most operators are still building.</p></div>
+    <div class="card coral"><div class="tag">Tech debt</div><h4>Legacy &amp; architectural debt</h4><p>Decades of monolithic, customized BSS/OSS. You can't get full value from AI or new services until you fix data governance and architecture — but modernization is unglamorous and competes for the same budget as AI. The defining tension of 2026.</p></div>
+    <div class="card coral"><div class="tag">Regulation</div><h4>Rules &amp; spectrum</h4><p>Spectrum is scarce, expensive and government-controlled. Add data privacy, lawful intercept, net-neutrality, satellite/OTT debates, security mandates and consumer protection. Regulators shape the market structure itself.</p></div>
+    <div class="card coral"><div class="tag">Geopolitics</div><h4>Supply-chain &amp; security</h4><p>The RAN market is dangerously concentrated (Ericsson, Nokia, Huawei, Samsung). Banning Huawei in many markets left some with only <strong>two real choices</strong>. Open RAN promised diversification but has under-delivered. Vendor revenue is shrinking — a fragile supply base.</p></div>
+    <div class="card coral"><div class="tag">Competition</div><h4>Churn &amp; new entrants</h4><p>Number portability makes switching trivial; OTT players (WhatsApp, etc.) ate voice/SMS revenue; hyperscalers and satellite (Starlink) now circle. Defending the customer relationship is existential.</p></div>
+    <div class="card coral"><div class="tag">Fraud &amp; leakage</div><h4>Money slipping away</h4><p>Revenue leakage, SIM-box fraud, roaming fraud, interconnect disputes. At telco scale, a 1% leak is enormous — which is why revenue assurance &amp; fraud sit right beside charging.</p></div>
+  </div>
+
+  <details class="zoom">
+    <summary><span class="zi">+</span> Supply chain &amp; Open RAN — the deeper story <span class="zlabel">zoom in</span></summary>
+    <div class="zoom-body">
+      <p class="pro">The telecom equipment market <em>contracted sharply</em> (an ~11% drop in 2024, the worst in 20+ years) as operators cut capex post-5G-peak. Western policy banned Huawei to favour alternatives, but instead of consolidating around secure vendors, the market <em>fragmented</em>, leaving Huawei-free countries reliant on essentially two RAN suppliers. <strong>Open RAN</strong> — disaggregating RAN into interoperable, multi-vendor components — was meant to fix this; governments funded it (UK, US). But brownfield operators value reliability and single-vendor accountability, so adoption lags and many "Open RAN" deals are effectively single-vendor. Net effect: a concentrated, financially-stressed, geopolitically-exposed supply base — a genuine resilience risk.</p>
+      <p class="eli5">There are only a handful of companies in the world that can build the radios on cell towers. Politics ruled some of them out, leaving very few choices. An effort called "Open RAN" tried to let companies mix-and-match parts from many suppliers (like building a PC), but it's been slower and harder than hoped — so the world still leans on a tiny, fragile set of suppliers.</p>
+    </div>
+  </details>
+
+  <div class="india"><span class="tag">🇮🇳 India angle — the regulatory &amp; competitive landscape</span><p>The <b>Telecommunications Act, 2023</b> replaced the 138-year-old Telegraph Act (1885) — moving from a <em>licensing</em> to an <em>authorisation</em> model, renaming the USO Fund as <b>Digital Bharat Nidhi</b>, and explicitly pulling <em>satellite, M2M and cybersecurity</em> into scope. The market has consolidated to essentially <b>Jio, Airtel &amp; (a struggling) Vi + BSNL</b> — raising real questions about whether competition keeps prices fair. Live battlegrounds: the long-running <b>AGR</b> (Adjusted Gross Revenue) liabilities saga (with targeted relief for Vi given govt equity), <b>satellite-spectrum pricing</b> (Starlink/OneWeb vs. terrestrial players over a "level playing field"), and spectrum auctions across sub-1GHz → mmWave. TRAI recommends; DoT decides — and the two don't always agree.</p></div>
+</section>
+
+<!-- ========== FUTURE ========== -->
+<section id="future">
+  <div class="kicker">08 — The direction of travel</div>
+  <h2>Where the industry is moving</h2>
+  <p class="lead">Every trend below is a direct response to the forces in section 07. If you can connect each solution back to the problem it solves, you're thinking like a telco strategist.</p>
+
+  <div class="grid g2">
+    <div class="card"><div class="tag">Architecture</div><h4>Monolith → modular, cloud-native BSS/OSS</h4><p>The big one: replace Amdocs-style suites with composable <strong>ODA components</strong> wired by Open APIs, running on cloud/Kubernetes. Goal: launch products in days, swap vendors, scale elastically. <span class="pill t">solves: tech debt + time-to-market</span></p></div>
+    <div class="card"><div class="tag">Intelligence</div><h4>AI-native &amp; autonomous networks</h4><p>From AI pilots to AI as the <em>operating system</em> of the telco: self-healing networks, predictive assurance, automated charging/care, "zero-touch" operations. Also the inference/edge-compute opportunity. <span class="pill t">solves: opex + 5G monetization</span></p></div>
+    <div class="card"><div class="tag">Business model</div><h4>TechCo · NetCo / ServCo / InfraCo</h4><p>Structural reinvention: become a platform ("TechCo"), or <strong>delayer</strong> — split the network (NetCo/InfraCo, asset-heavy) from the customer business (ServCo, asset-light) to optimize capital. Plus consolidation &amp; fixed-mobile-satellite convergence to lock in ARPU. <span class="pill t">solves: capex returns</span></p></div>
+    <div class="card"><div class="tag">Revenue</div><h4>Network-as-a-Service &amp; API monetization</h4><p>Sell <em>capabilities</em>, not just bandwidth: network slices, private 5G, and exposing network functions to developers via <strong>CAMARA / Open Gateway</strong> APIs (quality-on-demand, location, anti-fraud). The hunt for the elusive new revenue line. <span class="pill t">solves: ARPU + enterprise growth</span></p></div>
+    <div class="card"><div class="tag">Access</div><h4>eSIM / iSIM &amp; 5G SA</h4><p>Programmable SIMs cut activation friction and reshape onboarding/CRM. 5G Standalone unlocks slicing &amp; deterministic SLAs — the technical prerequisite for premium B2B charging. <span class="pill t">solves: friction + 5G value</span></p></div>
+    <div class="card"><div class="tag">Edge & beyond</div><h4>Edge, sovereign AI &amp; subsea for AI</h4><p>Telcos repositioning as the foundational <em>connectivity &amp; data-transport layer for AI</em> — hosting inference at the edge, selling AI-era backhaul/DCI, and (where they own subsea/fibre) carrying the east-west AI traffic boom. <span class="pill t">solves: capex monetization</span></p></div>
+  </div>
+
+  <div class="keypt"><p><b>The throughline:</b> connectivity is commoditized, so value migrates <em>up</em> (software, platforms, AI, enterprise outcomes) and the cost base must come <em>down</em> (cloud-native, automation, vendor flexibility). BSS modernization sits at the exact center of both moves — which is why it's where the money and the careers are.</p></div>
+</section>
+
+<!-- ========== BUILD A TELCO ========== -->
+<section id="build">
+  <div class="kicker">09 — The capstone</div>
+  <h2>How to actually build a telco</h2>
+  <p class="lead">You said the real goal: after learning eTOM, help someone <em>build</em> a telecom company. Here's the end-to-end playbook, using everything above. Each step names the frameworks &amp; components you'd reach for.</p>
+
+  <div class="pathbox">
+    <h3 style="margin-top:0">The greenfield operator playbook</h3>
+    <ol class="steps">
+      <li><b>Pick your model &amp; segment.</b> MNO (own spectrum + network — huge capex, regulatory) or <em>MVNO on an MVNE</em> (asset-light, fast)? Retail, SMB, IoT, or enterprise? This single choice cascades through every layer. <span class="pill a">force: capex vs. speed</span></li>
+      <li><b>Secure the rights.</b> Authorisation/licence + spectrum (or a wholesale/MVNO agreement). In India: authorisation under the <em>Telecom Act 2023</em>, dealing with DoT. <span class="pill a">regulation</span></li>
+      <li><b>Map your business with eTOM.</b> Define which Level-1/2 processes you'll run across SIP, Operations (FAB) and Enterprise Management. This becomes your scope, your org chart, and your RFP language. <span class="pill v">eTOM</span></li>
+      <li><b>Model your world with SID.</b> Define your Product → Service → Resource catalog data model so every system speaks the same language from day one. <span class="pill v">SID</span></li>
+      <li><b>Choose an architecture: go modular.</b> Design a cloud-native, ODA-aligned stack of components on an ODA Canvas — <em>don't</em> buy a monolith you'll regret. <span class="pill v">ODA</span></li>
+      <li><b>Stand up BSS.</b> Catalog → CRM → Order Management → Mediation → Convergent Charging (OCS for prepaid) → Billing → Revenue Management. Wire them with Open APIs. Decide prepaid/postpaid/convergent early. <span class="pill t">BSS</span></li>
+      <li><b>Stand up OSS.</b> Inventory (source of truth) → Fulfillment/provisioning → Assurance (fault + performance). Define the BSS↔OSS order-decomposition handoff. <span class="pill t">OSS</span></li>
+      <li><b>Source the network &amp; supply chain.</b> RAN/core vendors (or RAN-sharing), transport, interconnect/IPX for roaming, subsea/wholesale capacity. Plan for vendor concentration risk. <span class="pill a">supply chain</span></li>
+      <li><b>Plan monetization &amp; partners.</b> Pricing, partner settlement, B2B2X, and expose capabilities via CAMARA/Open Gateway APIs. Build revenue assurance &amp; fraud in from the start, not after you leak. <span class="pill t">revenue</span></li>
+      <li><b>Operate, assure, evolve.</b> Layer in AI/automation for zero-touch ops, watch ARPU/churn obsessively, and keep the architecture composable so you can adapt as 5G→6G and regulation shift. <span class="pill t">AI-native</span></li>
+    </ol>
+  </div>
+
+  <div class="keypt"><p><b>If you can walk someone through those ten steps — naming the eTOM processes, the SID model, the BSS/OSS components and the ODA assembly at each one — you have exactly the command you set out to build.</b> The rest is depth, which the zoom-ins above (and the PDF companion) give you on demand.</p></div>
+</section>
+
+<!-- ========== DEEP DIVE LAB ========== -->
+<section id="deepdives">
+  <div class="kicker">⌗ — Optional advanced wing</div>
+  <h2>The Deep Dive Lab</h2>
+  <p class="lead">Three focused reading rooms for when you want to go past the map and into the machinery. Each opens as a <em>separate, full-screen space</em> with one job — so you can dive deep on purpose, then step straight back to the big picture without losing your place.</p>
+  <div class="dlab-note"><b>How this works &mdash; by design, not by accident:</b> these are deliberate destinations, not inline rabbit holes. Click <em>Enter</em> to open a deep dive; the map pauses behind it. A persistent <em>&larr; Back to the big picture</em> button (or the <b>Esc</b> key) returns you exactly where you were. The Explorer&nbsp;&harr;&nbsp;Architect toggle keeps working inside.</div>
+  <div class="grid g3">
+    <div class="card dlabcard"><span class="num">01</span><div class="tag">Process</div><h4>eTOM Level-2</h4><p>The actual process grid &mdash; CRM, SM&amp;O, RM&amp;O, S/PRM across the FAB columns &mdash; and how one order chains through it. What turns "I know telecom" into "I can scope a transformation."</p><button class="diveBtn" onclick="openDive('dive-etom')">Enter deep dive &rarr;</button></div>
+    <div class="card dlabcard amber"><span class="num">02</span><div class="tag">Money</div><h4>Charging &amp; OCS</h4><p>The real-time financial engine: online vs offline, the OCS quota-reservation handshake, and 5G's converged CHF. The most contested, most mission-critical box in all of BSS.</p><button class="diveBtn" onclick="openDive('dive-charging')">Enter deep dive &rarr;</button></div>
+    <div class="card dlabcard violet"><span class="num">03</span><div class="tag">Market</div><h4>Vendor Landscape</h4><p>Amdocs &middot; Netcracker &middot; Ericsson vs. the cloud-native / ODA-native challengers &mdash; plus the 2025&ndash;26 consolidation wave and a build-vs-buy decision framework.</p><button class="diveBtn" onclick="openDive('dive-vendors')">Enter deep dive &rarr;</button></div>
+  </div>
+</section>
+
+</main>
+<!-- ===== OVERLAY: eTOM LEVEL-2 ===== -->
+<div class="overlay" id="dive-etom" role="dialog" aria-modal="true" aria-label="eTOM Level-2 deep dive">
+  <div class="ovhead"><div class="ovhead-in">
+    <button class="backbtn" onclick="closeDive()">&larr; Back to the big picture</button>
+    <div class="ovtitle">Deep Dive 01 &middot; Process<b>eTOM Level-2</b></div>
+    <div class="ovribbon">Focused mode</div>
+  </div></div>
+  <div class="ovbody">
+    <div class="youhere">You're in a deep dive. The main map is paused behind this &mdash; press <b>Esc</b> or "Back" to return any time.</div>
+
+    <h2>eTOM Level-2 &mdash; the real grid</h2>
+    <p class="lead">On the map, eTOM was three big areas and the FAB columns. That's Level&nbsp;1. To <em>actually scope a project or read a vendor RFP</em>, you work one layer down &mdash; Level&nbsp;2, the named process blocks. This is that layer, laid out as the grid every practitioner carries in their head.</p>
+
+    <div class="eli5"><span class="modeflag">Explorer &middot; the simple version</span><p>Think of a hospital. Level&nbsp;1 is "the hospital." Level&nbsp;2 is the named departments &mdash; A&amp;E, surgery, pharmacy, billing. You don't manage "a hospital"; you manage <em>departments</em>, and you trace a patient <em>through</em> them. eTOM Level-2 is the telco's named departments, and a customer order is the patient moving through them.</p></div>
+    <div class="pro"><span class="modeflag">Architect &middot; the precise version</span><p>eTOM is a strict decomposition: <b>Level&nbsp;0</b> (enterprise) &rarr; <b>Level&nbsp;1</b> (process groupings) &rarr; <b>Level&nbsp;2</b> (the process blocks you scope around) &rarr; <b>Level&nbsp;3</b> (detailed sub-processes) &rarr; <b>Level&nbsp;4</b> (tasks). Level&nbsp;2 is the Goldilocks layer &mdash; granular enough to be real capabilities you can own, staff and procure; coarse enough to fit on one page. In the Operations area, Level-2 processes sit at the intersection of a <em>functional row</em> (CRM, SM&amp;O, RM&amp;O, S/PRM) and a <em>FAB column</em>.</p></div>
+
+    <h3>The Operations grid &mdash; rows &times; FAB columns</h3>
+    <div class="diagram"><div class="dcap">eTOM Operations &mdash; Level-2 processes at each intersection</div>
+    <div class="etomwrap"><table class="etomgrid">
+      <tr><th class="rh">Operations</th><th class="th-o">OSR &middot; Support &amp; Readiness</th><th class="th-f">Fulfillment</th><th class="th-a">Assurance</th><th class="th-b">Billing &amp; Revenue</th></tr>
+      <tr><th class="rh">CRM<br><span style="font-weight:400;color:var(--txt-dim);font-size:9.5px">Customer Relationship Mgmt</span></th>
+        <td><span class="chip o">CRM Support &amp; Readiness</span></td>
+        <td><span class="chip f">Selling</span><span class="chip f">Order Handling</span><span class="chip f">Marketing Fulfillment Response</span><span class="chip f">Customer Interface Mgmt</span></td>
+        <td><span class="chip a">Problem Handling</span><span class="chip a">Customer QoS / SLA Mgmt</span><span class="chip a">Retention &amp; Loyalty</span></td>
+        <td><span class="chip b">Manage Billing Events</span><span class="chip b">Charging</span><span class="chip b">Manage Balances</span><span class="chip b">Bill Invoice Mgmt</span><span class="chip b">Bill Payments &amp; Receivables</span><span class="chip b">Bill Inquiry Handling</span></td></tr>
+      <tr><th class="rh">SM&amp;O<br><span style="font-weight:400;color:var(--txt-dim);font-size:9.5px">Service Mgmt &amp; Operations</span></th>
+        <td><span class="chip o">SM&amp;O Support &amp; Readiness</span></td>
+        <td><span class="chip f">Service Configuration &amp; Activation</span></td>
+        <td><span class="chip a">Service Problem Mgmt</span><span class="chip a">Service Quality Mgmt</span></td>
+        <td><span class="chip b">Service Guiding &amp; Mediation</span></td></tr>
+      <tr><th class="rh">RM&amp;O<br><span style="font-weight:400;color:var(--txt-dim);font-size:9.5px">Resource Mgmt &amp; Operations</span></th>
+        <td><span class="chip o">RM&amp;O Support &amp; Readiness</span></td>
+        <td><span class="chip f">Resource Provisioning</span></td>
+        <td><span class="chip a">Resource Trouble Mgmt</span><span class="chip a">Resource Performance Mgmt</span></td>
+        <td><span class="chip b">Resource Mediation &amp; Reporting</span></td></tr>
+      <tr><th class="rh">S/PRM<br><span style="font-weight:400;color:var(--txt-dim);font-size:9.5px">Supplier / Partner Rel. Mgmt</span></th>
+        <td><span class="chip o">S/PRM Support &amp; Readiness</span></td>
+        <td><span class="chip f">S/P Requisition Mgmt</span></td>
+        <td><span class="chip a">S/P Problem Reporting &amp; Mgmt</span><span class="chip a">S/P Performance Mgmt</span></td>
+        <td><span class="chip b">S/P Settlements &amp; Payments Mgmt</span><span class="chip b">S/P Interface Mgmt</span></td></tr>
+    </table></div>
+    <p style="font-size:12px;color:var(--txt-faint);margin:8px 0 0">Colour = FAB column. Rows descend from <b>customer-facing</b> (CRM) to <b>supplier-facing</b> (S/PRM) &mdash; mirroring the network stack: customer &rarr; service &rarr; resource &rarr; supplier.</p>
+    </div>
+
+    <h3>The payoff: trace one order across the grid</h3>
+    <p>The grid isn't a filing cabinet &mdash; it's a <em>circuit board</em>. Real value comes from following an end-to-end flow as it hands off between Level-2 processes, row by row, down the stack:</p>
+    <div class="flowtag">&#9656; FULFILLMENT flow (order &rarr; live service)</div>
+    <p style="margin:4px 0 12px"><code>Selling</code> &rarr; <code>Order Handling</code> <span style="color:var(--txt-faint)">(CRM)</span> &rarr; <code>Service Configuration &amp; Activation</code> <span style="color:var(--txt-faint)">(SM&amp;O)</span> &rarr; <code>Resource Provisioning</code> <span style="color:var(--txt-faint)">(RM&amp;O)</span> &rarr; <code>S/P Requisition Mgmt</code> <span style="color:var(--txt-faint)">(S/PRM, if a partner supplies part of it)</span>.</p>
+    <div class="flowtag">&#9656; ASSURANCE flow (something breaks)</div>
+    <p style="margin:4px 0 12px"><code>Problem Handling</code> <span style="color:var(--txt-faint)">(CRM &mdash; what the customer sees)</span> &rarr; <code>Service Problem Mgmt</code> <span style="color:var(--txt-faint)">(SM&amp;O)</span> &rarr; <code>Resource Trouble Mgmt</code> <span style="color:var(--txt-faint)">(RM&amp;O &mdash; the actual fault)</span>.</p>
+    <div class="flowtag">&#9656; BILLING flow (usage &rarr; cash)</div>
+    <p style="margin:4px 0 8px"><code>Resource Mediation &amp; Reporting</code> &rarr; <code>Service Guiding &amp; Mediation</code> &rarr; <code>Manage Billing Events</code> + <code>Charging</code> &rarr; <code>Bill Invoice Mgmt</code> &rarr; <code>Bill Payments &amp; Receivables</code>.</p>
+    <div class="keypt"><p><b>This is the "aha":</b> map any telco activity to a Level-2 process, and you instantly know who owns it, what it hands to next, and which system (BSS or OSS) implements it. That's the literal skill assessed in eTOM Practitioner certification &mdash; As-Is vs To-Be mapping, gap analysis, RASCI.</p></div>
+
+    <h3>The other two areas (Level-2, briefly)</h3>
+    <table class="tbl">
+      <tr><th>SIP &mdash; Strategy, Infrastructure &amp; Product</th><th>Level-2 examples</th></tr>
+      <tr><td><b>Marketing &amp; Offer Mgmt</b></td><td>Market Strategy &amp; Policy &middot; Product &amp; Offer Portfolio Planning &middot; Product &amp; Offer Development &amp; Retirement &middot; Sales Development</td></tr>
+      <tr><td><b>Service Development &amp; Mgmt</b></td><td>Service Strategy &amp; Planning &middot; Service Capability Delivery &middot; Service Development &amp; Retirement</td></tr>
+      <tr><td><b>Resource Development &amp; Mgmt</b></td><td>Resource Strategy &amp; Planning &middot; Resource Capability Delivery &middot; Resource Development &amp; Retirement</td></tr>
+      <tr><td><b>Supply Chain Development &amp; Mgmt</b></td><td>Supply Chain Strategy &amp; Planning &middot; Supply Chain Capability Delivery &middot; Supply Chain Development &amp; Change Mgmt</td></tr>
+    </table>
+    <p style="font-size:14px"><b>Note where supply chain lives:</b> the <em>building</em> of supplier relationships sits in SIP (plan &amp; develop the chain); the <em>running</em> of them sits in Operations as S/PRM. That split is exactly the eTOM "build it vs. run it" logic.</p>
+    <p style="font-size:14px"><b>Enterprise Management</b> (Level-1 groups): Strategic &amp; Enterprise Planning &middot; Financial &amp; Asset Mgmt &middot; Human Resources Mgmt &middot; Enterprise Risk Mgmt &middot; Enterprise Effectiveness Mgmt &middot; Knowledge &amp; Research Mgmt &middot; Stakeholder &amp; External Relations Mgmt. (Generic "run any big company" processes.)</p>
+
+    <div class="warn"><p><b>Honest caveat &mdash; the live model has moved on:</b> the clean 4&times;4 grid above is the <em>canonical teaching model</em> and still how most practitioners think. But the actual GB921 repository has been heavily restructured (v21.5 alone deleted 167 processes and added 540+, and removed the old "Common" domain; current release is <em>v25.0, Nov 2025</em>). Modern eTOM is more <em>domain-based decomposition</em> than rigid matrix, and &mdash; crucially &mdash; its Level-2/3 processes now trace directly to <b>ODA functional blocks and components</b>. So: learn the grid to <em>think</em>; use the live spec + ODA mapping to <em>build</em>.</p></div>
+
+    <h3>How you actually use Level-2 (the practitioner's toolkit)</h3>
+    <ul class="ds">
+      <li><b>Scope a programme:</b> circle the Level-2 boxes in play &mdash; instant, unambiguous project boundary everyone agrees on.</li>
+      <li><b>Gap analysis:</b> map your <em>As-Is</em> systems onto the grid, then your <em>To-Be</em>; the deltas are your roadmap.</li>
+      <li><b>Kill duplication:</b> if three systems all claim "Order Handling," the grid exposes it.</li>
+      <li><b>Write better RFPs:</b> demand vendors state which Level-2 processes (and which Open APIs) each component covers.</li>
+      <li><b>Bridge to architecture:</b> Level-2 process &rarr; ODA component &rarr; Open API &rarr; SID data entity. That chain is how a process map becomes a deployable system.</li>
+    </ul>
+
+    <button class="bigexit" onclick="closeDive()">&larr; Done here &mdash; back to the big picture</button>
+  </div>
+</div>
+
+<!-- ===== OVERLAY: CHARGING & OCS ===== -->
+<div class="overlay" id="dive-charging" role="dialog" aria-modal="true" aria-label="Charging and OCS deep dive">
+  <div class="ovhead"><div class="ovhead-in">
+    <button class="backbtn" onclick="closeDive()">&larr; Back to the big picture</button>
+    <div class="ovtitle">Deep Dive 02 &middot; Money<b>Charging &amp; OCS</b></div>
+    <div class="ovribbon">Focused mode</div>
+  </div></div>
+  <div class="ovbody">
+    <div class="youhere">You're in a deep dive. The main map is paused behind this &mdash; press <b>Esc</b> or "Back" to return any time.</div>
+
+    <h2>Charging &amp; the OCS</h2>
+    <p class="lead">Charging is the one BSS box where being wrong costs real money <em>in real time</em>, at millions of events per second, with no second chances. That's why it's the most contested, most specialised, most mission-critical system in the whole stack &mdash; and why it deserves its own room.</p>
+
+    <div class="eli5"><span class="modeflag">Explorer &middot; the simple version</span><p>Two ways a shop can charge you. <b>Postpaid</b> = a bar tab: you drink all night, they total it up later (that's <em>offline</em> charging). <b>Prepaid</b> = an arcade card: before every single game the machine checks your balance and stops you the instant it's empty (that's <em>online</em> charging, run by the OCS). The OCS is a cashier so fast it can do that check millions of times a second and never make a mistake.</p></div>
+
+    <h3>Offline vs Online &mdash; the fundamental split</h3>
+    <table class="tbl">
+      <tr><th>Dimension</th><th>Offline (OFCS)</th><th>Online (OCS)</th></tr>
+      <tr><td><b>When</b></td><td>After usage (post-paid)</td><td>Before / during usage (pre-paid), real-time</td></tr>
+      <tr><td><b>Controls credit?</b></td><td>No &mdash; just records what happened</td><td>Yes &mdash; authorizes, reserves &amp; can <em>cut you off</em> at zero</td></tr>
+      <tr><td><b>Classic use</b></td><td>Postpaid contracts, enterprise</td><td>Prepaid mobile, IoT, anything needing live control</td></tr>
+      <tr><td><b>4G interface</b></td><td>Diameter <code>Gz</code></td><td>Diameter <code>Gy</code> / <code>Ro</code> (and SS7/<code>CAMEL</code> for 2G/3G)</td></tr>
+      <tr><td><b>Output</b></td><td>CDRs &rarr; billing system</td><td>Live balance decrements + CDRs</td></tr>
+    </table>
+
+    <h3>Inside the OCS &mdash; the anatomy</h3>
+    <div class="grid g4" style="margin-bottom:8px">
+      <div class="card amber"><div class="tag">Engine</div><h4>Rating Function (RF)</h4><p>Turns a raw event ("90 sec call", "50 MB") into a price using the tariff &mdash; the maths of money.</p></div>
+      <div class="card amber"><div class="tag">Wallet</div><h4>Balance Mgmt (ABMF)</h4><p>Account Balance Mgmt Function: holds &amp; updates balances &mdash; money, free minutes, data buckets, loyalty points.</p></div>
+      <div class="card amber"><div class="tag">Trigger</div><h4>CTF (in the network)</h4><p>Charging Trigger Function: the network node (e.g. PGW/SMF) that fires a charging request whenever you use something.</p></div>
+      <div class="card amber"><div class="tag">Control</div><h4>Credit-Control / Quota</h4><p>The real-time loop that authorizes, grants quota, re-authorizes and finally debits &mdash; the part that must never blink.</p></div>
+    </div>
+
+    <h3>The handshake that makes prepaid possible</h3>
+    <p>This quota-reservation loop is the single most important flow in real-time charging. Master it and you understand the OCS.</p>
+    <div class="diagram"><div class="dcap">OCS online charging &mdash; the credit-control / quota loop</div>
+    <svg viewBox="0 0 900 320" role="img" aria-label="OCS quota reservation sequence">
+      <defs><marker id="ar" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#37e0c8"/></marker>
+      <marker id="arA" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ffb24d"/></marker></defs>
+      <g font-size="11" font-family="IBM Plex Mono">
+        <rect x="70" y="14" width="200" height="34" rx="8" fill="#16202f" stroke="#37e0c8"/><text x="170" y="36" fill="#37e0c8" text-anchor="middle" font-weight="600">CTF (network: SMF/PGW)</text>
+        <rect x="630" y="14" width="200" height="34" rx="8" fill="#16202f" stroke="#ffb24d"/><text x="730" y="36" fill="#ffb24d" text-anchor="middle" font-weight="600">OCS (RF + ABMF)</text>
+        <line x1="170" y1="48" x2="170" y2="300" stroke="#2e405e" stroke-width="1"/>
+        <line x1="730" y1="48" x2="730" y2="300" stroke="#2e405e" stroke-width="1"/>
+        <g fill="#dfe7f2" text-anchor="middle">
+          <line x1="172" y1="72" x2="728" y2="72" stroke="#37e0c8" stroke-width="1.4" marker-end="url(#ar)"/>
+          <text x="450" y="66">1 &middot; CCR-Initial &mdash; "user starts a session, may I?"</text>
+          <line x1="728" y1="104" x2="172" y2="104" stroke="#ffb24d" stroke-width="1.4" marker-end="url(#arA)"/>
+          <text x="450" y="98" fill="#ffb24d">2 &middot; CCA &mdash; check balance, RESERVE quota, grant e.g. 10 MB</text>
+          <text x="450" y="138" fill="#637191" font-size="10">&#8635; user consumes the granted quota &middot; CTF meters locally</text>
+          <line x1="172" y1="168" x2="728" y2="168" stroke="#37e0c8" stroke-width="1.4" marker-end="url(#ar)"/>
+          <text x="450" y="162">3 &middot; CCR-Update &mdash; "used it, need more" (re-authorize)</text>
+          <line x1="728" y1="200" x2="172" y2="200" stroke="#ffb24d" stroke-width="1.4" marker-end="url(#arA)"/>
+          <text x="450" y="194" fill="#ffb24d">4 &middot; CCA &mdash; debit used, grant next chunk (or DENY if empty)</text>
+          <text x="450" y="234" fill="#637191" font-size="10">&#8635; loop 3&ndash;4 until session ends or balance hits zero &rarr; cut off</text>
+          <line x1="172" y1="264" x2="728" y2="264" stroke="#37e0c8" stroke-width="1.4" marker-end="url(#ar)"/>
+          <text x="450" y="258">5 &middot; CCR-Terminate &mdash; session over</text>
+          <line x1="728" y1="296" x2="172" y2="296" stroke="#ffb24d" stroke-width="1.4" marker-end="url(#arA)"/>
+          <text x="450" y="290" fill="#ffb24d">6 &middot; CCA &mdash; final debit, release unused reservation</text>
+        </g>
+      </g>
+    </svg></div>
+    <div class="keypt"><p><b>Why "reserve, don't just debit":</b> reserving a small quota up-front (not the whole balance) lets the OCS stay accurate even across many simultaneous sessions on the same balance, and cut a user off mid-session the moment credit runs out &mdash; without a round-trip per byte. That's the trick that made mass-market prepaid viable.</p></div>
+
+    <h3>5G: the Converged Charging System (CCS) &amp; CHF</h3>
+    <p class="pro">3GPP collapsed the old split. In 5G's Service-Based Architecture, OCS and OFCS merge into one <b>Converged Charging System</b>, whose central entity is the <b>CHF (Charging Function)</b> &mdash; combining the online (OCF) and offline (CDF) roles, plus Rating (RF), Balance Mgmt (ABMF) and the Charging Gateway (CGF). The network talks to it over the service-based interface <code>Nchf</code> (JSON over HTTP/2), with backward-compatible <code>Gy/Ro/Rf</code> for 4G interworking.</p>
+    <div class="grid g2">
+      <div class="card"><div class="tag">Before 5G</div><h4>Two siloed systems</h4><p>Separate OCS (prepaid) + OFCS (postpaid) &rarr; duplicated tariffs, "spaghetti" rating, customers locked into prepaid <em>or</em> postpaid.</p></div>
+      <div class="card"><div class="tag">5G CCS</div><h4>One convergent engine</h4><p>Prepaid + postpaid + any service on one platform with <em>shared balances</em> &mdash; and the flexibility to charge per <b>slice</b>, per <b>SLA</b>, per event for B2B2X &amp; IoT. This is the monetization unlock.</p></div>
+    </div>
+
+    <h3>The concepts that make it powerful (and hard)</h3>
+    <ul class="ds">
+      <li><b>Monetary &amp; non-monetary balances:</b> not just rupees &mdash; free minutes, data buckets, loyalty points, all rated against in real time.</li>
+      <li><b>Shared &amp; hierarchical balances:</b> a family plan or an enterprise with 10,000 lines drawing on one pool &mdash; concurrency without double-spend.</li>
+      <li><b>Multi-dimensional tariffs:</b> price by time-of-day, location, network, app, slice, QoS &mdash; all resolved live.</li>
+      <li><b>Policy vs charging:</b> the <b>PCF/PCRF</b> decides <em>what you're allowed</em> (speed, priority); charging decides <em>what it costs</em>. They interplay constantly &mdash; e.g. throttle instead of cut off.</li>
+      <li><b>Session-based vs event-based:</b> a data session (continuous) vs a single SMS or content purchase (discrete) &mdash; different charging operations.</li>
+    </ul>
+
+    <div class="warn"><p><b>Why charging is brutally hard &mdash; and the #1 vendor battleground:</b> it must be simultaneously real-time (sub-millisecond), exact (it's money), carrier-grade highly-available (five-nines-plus), massively scalable (millions of TPS), <em>and</em> flexible enough for slicing/IoT/B2B2X. Very few products do all six. That's why charging vendors get acquired for premiums &mdash; see the <button class="diveBtn ghost" style="margin:0;padding:4px 10px;font-size:11px" onclick="closeDive();setTimeout(()=>openDive('dive-vendors'),320)">Vendor Landscape &rarr;</button></p></div>
+
+    <div class="india"><span class="tag">&#127470;&#127475; India angle</span><p>India is overwhelmingly <b>prepaid</b> and operates at extraordinary scale (Jio alone serves hundreds of millions). That makes the OCS not a feature but the <em>existential core</em> of the business &mdash; real-time, exact, always-on, at volumes few markets ever test. Convergent charging is the strategic prize as operators chase postpaid, FWA, IoT and 5G B2B without rebuilding their rating estate.</p></div>
+
+    <button class="bigexit" onclick="closeDive()">&larr; Done here &mdash; back to the big picture</button>
+  </div>
+</div>
+
+<!-- ===== OVERLAY: VENDOR LANDSCAPE ===== -->
+<div class="overlay" id="dive-vendors" role="dialog" aria-modal="true" aria-label="Vendor landscape deep dive">
+  <div class="ovhead"><div class="ovhead-in">
+    <button class="backbtn" onclick="closeDive()">&larr; Back to the big picture</button>
+    <div class="ovtitle">Deep Dive 03 &middot; Market<b>Vendor Landscape</b></div>
+    <div class="ovribbon">Focused mode</div>
+  </div></div>
+  <div class="ovbody">
+    <div class="youhere">You're in a deep dive. The main map is paused behind this &mdash; press <b>Esc</b> or "Back" to return any time.</div>
+
+    <h2>The BSS vendor landscape</h2>
+    <p class="lead">Two camps fight for the BSS estate: the <em>incumbents</em> who sell broad, battle-tested suites to Tier-1 operators, and the <em>cloud-native / ODA-native challengers</em> who promise speed and openness. Knowing who's who &mdash; and how 2025&ndash;26 reshuffled the board &mdash; is what lets you steer a build-vs-buy decision credibly.</p>
+
+    <div class="eli5"><span class="modeflag">Explorer &middot; the simple version</span><p>Imagine buying the software to run a phone company. You can buy one giant, do-everything machine from a famous brand &mdash; powerful but heavy, pricey, and slow to change. Or you can assemble lighter "app-store" pieces from newer companies &mdash; faster and cheaper to change, but you have to fit them together. That's the whole fight.</p></div>
+
+    <h3>Camp 1 &mdash; the incumbents (&asymp;60% of the market)</h3>
+    <p><b>Amdocs, Huawei, Ericsson, Nokia, Netcracker</b> together hold roughly 60% of OSS/BSS revenue. They sell broad, end-to-end portfolios for large-scale, multi-year transformations at Tier-1 operators with messy legacy estates to untangle.</p>
+    <table class="tbl">
+      <tr><th>Vendor</th><th>Note</th></tr>
+      <tr><td><b>Amdocs</b></td><td>The category-defining BSS suite; deep billing/charging/order heritage. Pushing AI ("amAIz" / AI Factory) and cloud. Just bought <b>Matrixx</b> (charging).</td></tr>
+      <tr><td><b>Netcracker</b> (NEC)</td><td>Amdocs's chief rival; strong BSS <em>and</em> OSS. NEC's 2025 CSG acquisition bolts on more scale.</td></tr>
+      <tr><td><b>Ericsson / Nokia</b></td><td>Network giants with BSS/charging arms &mdash; natural pull-through with their 5G core. Ericsson partnering AWS for cloud-native BSS.</td></tr>
+      <tr><td><b>Huawei</b></td><td>Dominant in many APAC/EMEA/Africa markets; broad &amp; cost-competitive, but geopolitically constrained in the West.</td></tr>
+      <tr><td><b>Oracle, CSG, Comarch</b></td><td>Other broad-suite players; CSG strong in North American cable, now folding into NEC/Netcracker.</td></tr>
+    </table>
+    <p style="font-size:14px"><b>The well-understood trade-off:</b> incumbents win on <em>breadth and Tier-1 credibility</em>, but tend toward high implementation cost, multi-year timelines, and release cycles that can't match the pace of commercial innovation. Strong at BSS depth; weak at speed and developer-first experience.</p>
+
+    <h3>Camp 2 &mdash; the cloud-native / ODA-native challengers</h3>
+    <p>Newer entrants attack the monolith with cloud-native microservices, <b>ODA components</b>, Open APIs, faster deployment, lower total cost, and a developer-first, increasingly AI-native posture.</p>
+    <div class="grid g3">
+      <div class="card"><div class="tag">Charging</div><h4>Matrixx</h4><p>Cloud-native, real-time digital monetization &mdash; charging/rating/billing in one engine for 5G. <em>Acquired by Amdocs, early 2026.</em></p></div>
+      <div class="card"><div class="tag">Public-cloud</div><h4>Totogi</h4><p>Public-cloud, AI-native BSS/charging pitched as "telco-as-an-app" &mdash; the aggressive disruptor narrative.</p></div>
+      <div class="card"><div class="tag">Suite</div><h4>Cerillion</h4><p>UK; integrated, pre-converged BSS/OSS suite with a 3GPP-compliant CHF &mdash; modular but cohesive.</p></div>
+      <div class="card"><div class="tag">Monetization</div><h4>Optiva &rarr; Qvantel</h4><p>Cloud charging; <em>acquired by Qvantel, Dec 2025</em> to form an end-to-end monetization foundation.</p></div>
+      <div class="card"><div class="tag">ODA-aligned</div><h4>BearingPoint &amp; co.</h4><p>Beyond Now / Infonova and similar &mdash; explicitly ODA-aligned, partner-/ecosystem-centric platforms.</p></div>
+      <div class="card"><div class="tag">India / digital</div><h4>Comviva, Subex, Tecnotree, STL</h4><p>Strong in emerging markets &amp; digital BSS; Subex notable in revenue assurance/fraud.</p></div>
+    </div>
+
+    <h3>The 2025&ndash;26 consolidation wave (say this and you sound current)</h3>
+    <p>In barely a quarter, the board was reshuffled &mdash; driven by AI + cloud pressure forcing sub-scale charging vendors to "merge or sink":</p>
+    <table class="tbl">
+      <tr><th>When</th><th>Deal</th><th>Why it matters</th></tr>
+      <tr><td>Oct 2025</td><td><b>NEC acquires CSG</b> (&asymp;$2.9B)</td><td>Folds into Netcracker &rarr; leaves "two big dogs in BSS: Amdocs &amp; Netcracker." Messy product overlap to rationalize.</td></tr>
+      <tr><td>Dec 2025</td><td><b>Qvantel acquires Optiva</b></td><td>Builds an end-to-end monetization stack; classic sub-scale charging vendor absorbed.</td></tr>
+      <tr><td>Jan 2026</td><td><b>Amdocs acquires Matrixx</b> (&asymp;$200M)</td><td>Adds a cloud-native charging crown jewel &mdash; but the modest price read to many as a near-distressed sale, a signal about standalone charging economics.</td></tr>
+    </table>
+    <div class="keypt"><p><b>The pattern:</b> standalone, best-of-breed charging is hard to sustain as a business &mdash; few mid-size players can afford the AI/cloud re-tooling. Expect more "absorb the specialist into a suite" moves. The incumbents are buying back the modularity story rather than being killed by it.</p></div>
+
+    <h3>The build-vs-buy decision framework</h3>
+    <table class="tbl">
+      <tr><th>Dimension</th><th>Incumbent suite</th><th>Modular / ODA-native</th></tr>
+      <tr><td><b>Time-to-market</b></td><td>Slow (months&ndash;years)</td><td>Fast (weeks&ndash;months)</td></tr>
+      <tr><td><b>Total cost of ownership</b></td><td>High (licence + heavy SI)</td><td>Lower, consumption-based</td></tr>
+      <tr><td><b>Flexibility / new offers</b></td><td>Constrained by release cycles</td><td>High &mdash; config &amp; APIs</td></tr>
+      <tr><td><b>Tier-1 scale &amp; depth</b></td><td>Proven at the largest scale</td><td>Improving; varies by vendor</td></tr>
+      <tr><td><b>Integration risk</b></td><td>Lower (pre-integrated)</td><td>You own the assembly (mitigated by Open APIs)</td></tr>
+      <tr><td><b>Lock-in</b></td><td>High</td><td>Lower (swap components)</td></tr>
+      <tr><td><b>Best fit</b></td><td>Tier-1 brownfield untangling</td><td>Greenfield, MVNO, digital sub-brands, fast movers</td></tr>
+    </table>
+
+    <h3>So how do you actually choose?</h3>
+    <ul class="ds">
+      <li><b>Greenfield / MVNO / digital sub-brand:</b> go cloud-native / ODA-native. Speed and TCO win; you have no legacy to protect.</li>
+      <li><b>Tier-1 brownfield:</b> rarely a big-bang rip-and-replace. The smart play is a <em>strangler pattern</em> &mdash; stand up ODA components alongside the monolith and migrate capability-by-capability, often with an incumbent's transformation programme. Hybrid is the norm.</li>
+      <li><b>Charging specifically:</b> decide convergent-from-day-one; it's the hardest piece to swap later.</li>
+      <li><b>Always:</b> insist on Open API conformance and (now) ODA <em>component certification</em> &mdash; that's what makes "mix-and-match" real rather than marketing.</li>
+    </ul>
+
+    <div class="warn"><p><b>The provocative, command-level take:</b> while telco wrestled with charging standards, the cloud/AI industries built their own planet-scale, real-time metering &amp; monetization <em>without</em> adopting telco BSS technology at all. The uncomfortable implication: if telco BSS stays slow, proprietary and monolithic, it risks <em>growing irrelevance</em> &mdash; out-engineered by hyperscaler billing. That is the real reason "modular + open + cloud-native" isn't a fashion; it's a survival strategy. Tie this back to <button class="diveBtn ghost" style="margin:0;padding:4px 10px;font-size:11px" onclick="closeDive();setTimeout(()=>document.getElementById('future').scrollIntoView(),320)">Where it's heading &rarr;</button></p></div>
+
+    <button class="bigexit" onclick="closeDive()">&larr; Done here &mdash; back to the big picture</button>
+  </div>
+</div>
+
+
+<footer>
+  <p><b>THE TELECOM ATLAS</b> · a layered field guide to BSS, OSS &amp; the business of connectivity.</p>
+  <p>Reading modes: <b>Explorer</b> (intuitive) ↔ <b>Architect</b> (precise) — toggle any time, top bar. Frameworks reflect TM Forum eTOM v25.0 / ODA; industry &amp; India data current to early 2026. Use this as a map, then go deep where your interest pulls you.</p>
+  <p style="margin-top:14px;color:#637191">Built as a learning companion — pair with the PDF quick-reference for offline study &amp; interview prep.</p>
+</footer>
+
+<a href="#top" class="toc-jump">↑ top</a>
+
+<script>
+function setAud(m){
+  document.body.setAttribute('data-aud',m);
+  document.getElementById('b-eli5').classList.toggle('act',m==='eli5');
+  document.getElementById('b-pro').classList.toggle('act',m==='pro');
+}
+// active-section highlighting in nav
+const links=[...document.querySelectorAll('#secnav a')];
+const map={};links.forEach(a=>{const id=a.getAttribute('href').slice(1);const el=document.getElementById(id);if(el)map[id]=a;});
+const obs=new IntersectionObserver((es)=>{
+  es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('on'));const a=map[e.target.id];if(a)a.classList.add('on');}});
+},{rootMargin:'-45% 0px -50% 0px'});
+Object.keys(map).forEach(id=>{const el=document.getElementById(id);if(el)obs.observe(el);});
+
+/* ===== deep dive overlay control ===== */
+let _scrollY = 0;
+function openDive(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  _scrollY = window.scrollY;
+  document.body.classList.add('lock');
+  el.classList.add('open');
+  el.scrollTop = 0;
+  history.replaceState(null,'','#'+id);
+}
+function closeDive(){
+  document.querySelectorAll('.overlay.open').forEach(o=>o.classList.remove('open'));
+  document.body.classList.remove('lock');
+  window.scrollTo(0,_scrollY);
+  history.replaceState(null,'','#deepdives');
+}
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDive(); });
+// support direct deep-link e.g. ...#dive-charging
+window.addEventListener('load',()=>{
+  const h=location.hash.slice(1);
+  if(h && document.getElementById(h) && document.getElementById(h).classList.contains('overlay')){
+    openDive(h);
+  }
+});
+
+</script>
+</body>
+</html>
